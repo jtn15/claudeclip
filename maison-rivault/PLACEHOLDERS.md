@@ -17,7 +17,7 @@ Run `python3 build.py && python3 tools/check_placeholders.py` for the live list.
 - [ ] Fiber content for all six styles. Required by law for US garments; have a lawyer confirm wording.
 - [ ] Care instructions and fit note for all six styles
 - [ ] Size chart measurements (`size-guide.html`, edit in `build.py`)
-- [ ] Product photos, 23 slots across six styles, shot Nov 9 to 22, plus the home hero photo (`build.py`, `page_home`)
+- [ ] Product photos, 22 slots across six styles, shot Nov 9 to 22, plus the home hero photo (`build.py`, `page_home`)
 - [ ] Restock answer in the FAQ
 
 ## Policies (`site.config.json`)
