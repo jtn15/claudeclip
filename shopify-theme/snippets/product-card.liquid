@@ -1,0 +1,22 @@
+{%- comment -%}Product or bundle card. Param: product{%- endcomment -%}
+{%- assign tier = product.metafields.custom.tier.value -%}
+{%- assign color = product.metafields.custom.color.value -%}
+{%- assign is_bundle = false -%}
+{%- if product.metafields.custom.bundle_items.value != blank -%}{%- assign is_bundle = true -%}{%- endif -%}
+<a class="card" href="{{ product.url }}">
+  {%- assign card_caption = 'Product photo: ' | append: product.title | append: ', front' -%}
+  {% render 'media-or-placeholder', media: product.featured_image, caption: card_caption, alt: product.title %}
+  <div class="card-meta">
+    <div>
+      <div class="card-name">{{ product.title }}</div>
+      <div class="card-sub">
+        {%- if is_bundle -%}Bundle
+        {%- else -%}
+          {%- if color != blank %}{% render 'swatch', color: color %}{% endif -%}
+          {%- if tier != blank %}{{ tier }} &middot; {% endif %}{% if color != blank %}{{ color }}{% else %}{% render 'todo', label: 'color metafield' %}{% endif -%}
+        {%- endif -%}
+      </div>
+    </div>
+    {% render 'price', product: product %}
+  </div>
+</a>

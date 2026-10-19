@@ -1,0 +1,40 @@
+<section class="page-head"><div class="col"><h1>Cart</h1></div></section>
+<section style="padding-top: 1rem">
+  <div class="col">
+    {%- if cart.item_count == 0 -%}
+      <p>Your cart is empty.</p>
+      <p><a class="btn" href="{{ routes.all_products_collection_url }}">Shop</a></p>
+    {%- else -%}
+      <form action="{{ routes.cart_url }}" method="post" id="cart">
+        {%- for item in cart.items -%}
+          <div class="cart-line">
+            <a href="{{ item.url }}">{% render 'media-or-placeholder', media: item.image, caption: 'Photo', alt: item.product.title %}</a>
+            <div>
+              <div class="card-name">{{ item.product.title }}</div>
+              {%- unless item.product.has_only_default_variant -%}<div class="card-sub">{{ item.variant.title }}</div>{%- endunless -%}
+              {%- for property in item.properties -%}
+                {%- if property.last != blank -%}<span class="prop">{{ property.first }}: {{ property.last }}</span>{%- endif -%}
+              {%- endfor -%}
+              <div style="margin-top: 0.5rem">
+                <label class="visually-hidden" for="qty-{{ item.index }}">Quantity</label>
+                <input class="qty-input" id="qty-{{ item.index }}" type="number" name="updates[]" value="{{ item.quantity }}" min="0">
+                <a class="linkbtn" href="{{ item.url_to_remove }}">Remove</a>
+              </div>
+            </div>
+            <div class="price">{{ item.final_line_price | money_without_trailing_zeros }}</div>
+          </div>
+        {%- endfor -%}
+        <div class="cart-total"><span>Subtotal</span><span class="price">{{ cart.total_price | money_without_trailing_zeros }}</span></div>
+        <p class="small">Shipping and any taxes are calculated at checkout.</p>
+        <button class="btn btn-quiet btn-block" type="submit" name="update" style="margin-bottom: 0.75rem">Update quantities</button>
+        <button class="btn btn-block" type="submit" name="checkout">Checkout</button>
+      </form>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Cart"
+}
+{% endschema %}

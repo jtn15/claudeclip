@@ -1,0 +1,29 @@
+<section class="page-head"><div class="col"><h1>{{ page.title }}</h1></div></section>
+<section style="padding-top: 1rem">
+  <div class="col">
+    {%- for block in section.blocks -%}
+      <details {{ block.shopify_attributes }}>
+        <summary>{{ block.settings.question }}</summary>
+        <div>
+          {%- if block.settings.answer != blank -%}{{ block.settings.answer }}{%- else -%}{%- assign missing_label = 'answer to: ' | append: block.settings.question -%}<p>{% render 'todo', label: missing_label %}</p>{%- endif -%}
+        </div>
+      </details>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FAQ",
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "Question" },
+        { "type": "richtext", "id": "answer", "label": "Answer" }
+      ]
+    }
+  ]
+}
+{% endschema %}

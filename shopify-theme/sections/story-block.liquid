@@ -1,0 +1,21 @@
+<section class="story-block">
+  <div class="col center">
+    <p class="statement">{{ settings.story_sentence }}</p>
+    <p class="label muted">Est. {{ settings.established }} &middot;
+      {%- if settings.location != blank %} {{ settings.location }}{% else %} {% render 'todo', label: 'location, e.g. Phoenix, Arizona' %}{% endif -%}
+    </p>
+    {%- if section.settings.link != blank -%}
+      <p style="margin-top: 1.5rem"><a class="label" href="{{ section.settings.link }}">Our story</a></p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Story block",
+  "settings": [
+    { "type": "url", "id": "link", "label": "Link to the Our Story page" }
+  ],
+  "presets": [{ "name": "Story block" }]
+}
+{% endschema %}

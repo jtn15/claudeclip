@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-story",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

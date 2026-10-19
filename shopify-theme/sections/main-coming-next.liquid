@@ -1,0 +1,21 @@
+<section class="page-head"><div class="col"><h1>{{ page.title }}</h1></div></section>
+<section style="padding-top: 1rem">
+  <div class="col prose">
+    <p class="lede">After the first line, we plan to add:</p>
+    <ul>
+      {%- assign lines = section.settings.items | newline_to_br | split: '<br />' -%}
+      {%- for line in lines -%}{%- assign t = line | strip -%}{%- if t != blank -%}<li>{{ t }}</li>{%- endif -%}{%- endfor -%}
+    </ul>
+    <p>None of this is for sale yet. Leave your email and we will tell you when it is.</p>
+    {% render 'signup-form', form_id: 'coming-next', tag: 'coming-next', button: 'Tell me' %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Coming next",
+  "settings": [
+    { "type": "textarea", "id": "items", "label": "Items, one per line", "default": "Cardigan\nTrousers\nFootwear" }
+  ]
+}
+{% endschema %}

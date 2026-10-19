@@ -1,0 +1,47 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {}
+    },
+    "signature": {
+      "type": "collection-grid",
+      "settings": {
+        "heading": "Signature",
+        "blurb": "The core line, made to order.",
+        "limit": 6
+      }
+    },
+    "essentials": {
+      "type": "collection-grid",
+      "settings": {
+        "heading": "Essentials",
+        "blurb": "Everyday basics.",
+        "limit": 6
+      }
+    },
+    "bundles": {
+      "type": "collection-grid",
+      "settings": {
+        "heading": "Bundles",
+        "limit": 4
+      }
+    },
+    "story": {
+      "type": "story-block",
+      "settings": {}
+    },
+    "signup": {
+      "type": "email-signup",
+      "settings": {}
+    }
+  },
+  "order": [
+    "hero",
+    "signature",
+    "essentials",
+    "bundles",
+    "story",
+    "signup"
+  ]
+}

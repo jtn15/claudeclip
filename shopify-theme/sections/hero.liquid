@@ -1,0 +1,29 @@
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-copy">
+      <p class="label muted">{{ section.settings.eyebrow }}</p>
+      <h1>{{ settings.tagline }}</h1>
+      <p class="lede">{{ section.settings.text }}</p>
+      {%- if section.settings.button_url != blank -%}
+        <a class="btn" href="{{ section.settings.button_url }}">{{ section.settings.button_label }}</a>
+      {%- endif -%}
+    </div>
+    <div class="hero-art">
+      {% render 'media-or-placeholder', media: section.settings.image, caption: 'Hero photo: quarter-zip and polo, window light', alt: 'Hero photo' %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small label", "default": "Menswear in layers" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Knitwear for men, built in layers, in navy, camel, olive and cream." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop the line" },
+    { "type": "url", "id": "button_url", "label": "Button link" },
+    { "type": "image_picker", "id": "image", "label": "Hero photo", "info": "Leave empty to show the cream placeholder." }
+  ],
+  "presets": [{ "name": "Hero" }]
+}
+{% endschema %}

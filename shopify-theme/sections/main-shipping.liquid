@@ -1,0 +1,26 @@
+<section class="page-head"><div class="col"><h1>{{ page.title }}</h1></div></section>
+<section style="padding-top: 1rem">
+  <div class="col prose">
+    <h2>How products are made available</h2>
+    <p><strong>Made to order:</strong> made after you order. Estimated delivery: {% if settings.made_to_order_delivery != blank %}{{ settings.made_to_order_delivery }}{% else %}{% render 'todo', label: 'made-to-order delivery window' %}{% endif %}.</p>
+    <p><strong>In stock:</strong> ships right away. Ships {% if settings.in_stock_ship != blank %}{{ settings.in_stock_ship }}{% else %}{% render 'todo', label: 'in-stock ship time' %}{% endif %}.</p>
+    <p><strong>Preorder:</strong> not made yet. Expected to ship {% if settings.preorder_ship != blank %}{{ settings.preorder_ship }}{% else %}{% render 'todo', label: 'preorder ship window' %}{% endif %}. {% if settings.preorder_policy != blank %}{{ settings.preorder_policy }}{% else %}{% render 'todo', label: 'preorder charge policy, stated plainly' %}{% endif %}</p>
+    <p>Each product page says which of these applies.</p>
+    <h2>Shipping</h2>
+    <p><strong>Cost:</strong> {% if settings.shipping_cost != blank %}{{ settings.shipping_cost }}{% else %}{% render 'todo', label: 'shipping cost' %}{% endif %}.</p>
+    <p><strong>Where we ship:</strong> {% if settings.shipping_regions != blank %}{{ settings.shipping_regions }}{% else %}{% render 'todo', label: 'shipping regions' %}{% endif %}.</p>
+    <h2>Holiday orders</h2>
+    {% render 'holiday-notice' %}
+    <h2>Returns</h2>
+    <p><strong>Window:</strong> {% if settings.return_days != blank %}{{ settings.return_days }} days from delivery{% else %}{% render 'todo', label: 'return window' %}{% endif %}.</p>
+    <p><strong>Condition:</strong> {% if settings.return_conditions != blank %}{{ settings.return_conditions }}{% else %}{% render 'todo', label: 'return conditions, e.g. unworn with tags' %}{% endif %}.</p>
+    <p><strong>Return shipping:</strong> {% if settings.return_shipping != blank %}{{ settings.return_shipping }}{% else %}{% render 'todo', label: 'who pays return shipping' %}{% endif %}.</p>
+    <p>To start a return, <a href="{{ routes.root_url }}pages/contact">contact us</a> with your order number.</p>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Shipping and returns"
+}
+{% endschema %}

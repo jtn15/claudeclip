@@ -1,0 +1,50 @@
+{
+  "name": "Footer",
+  "type": "footer",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "shop": {
+          "type": "links",
+          "settings": {
+            "heading": "Shop",
+            "menu": "main-menu"
+          }
+        },
+        "help": {
+          "type": "links",
+          "settings": {
+            "heading": "Help",
+            "menu": "footer"
+          }
+        },
+        "brand": {
+          "type": "links",
+          "settings": {
+            "heading": "Maison Rivault",
+            "menu": "footer",
+            "show_instagram": true
+          }
+        },
+        "legal": {
+          "type": "links",
+          "settings": {
+            "heading": "Legal",
+            "show_policies": true
+          }
+        }
+      },
+      "block_order": [
+        "shop",
+        "help",
+        "brand",
+        "legal"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

@@ -1,0 +1,61 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Maison Rivault",
+    "theme_version": "1.0.0",
+    "theme_author": "Maison Rivault",
+    "theme_documentation_url": "https://github.com/jtn15/claudeclip/tree/claude/great-albattani-mb77iw/shopify-theme",
+    "theme_support_url": "https://github.com/jtn15/claudeclip/issues"
+  },
+  {
+    "name": "Brand",
+    "settings": [
+      { "type": "image_picker", "id": "favicon", "label": "Favicon", "info": "Upload favicon-32.png from the shopify-theme-brand folder." },
+      { "type": "image_picker", "id": "apple_touch_icon", "label": "Apple touch icon", "info": "Upload apple-touch-icon.png from the shopify-theme-brand folder." },
+      { "type": "text", "id": "tagline", "label": "Tagline", "default": "Quiet layers for every season." },
+      { "type": "textarea", "id": "story_sentence", "label": "One-sentence story", "default": "Maison Rivault makes quiet, well-made knitwear for men who want to look put-together without trying, built in layers you can wear from the first cold morning to the last." },
+      { "type": "text", "id": "established", "label": "Established year", "default": "2026" },
+      { "type": "text", "id": "location", "label": "Location line", "info": "Example: Phoenix, Arizona. Leave blank until confirmed; blank shows a [confirm] marker." }
+    ]
+  },
+  {
+    "name": "Launch and prices",
+    "settings": [
+      { "type": "header", "content": "Waitlist mode" },
+      { "type": "paragraph", "content": "Waitlist mode is Shopify's own storefront password (Online Store > Preferences > Restrict access). With the password on, visitors see only the waitlist page. Turn it off to open the store." },
+      { "type": "text", "id": "launch_label", "label": "Launch label", "default": "mid-December" },
+      { "type": "header", "content": "Prices" },
+      { "type": "checkbox", "id": "show_prices", "label": "Show prices and allow Add to cart", "default": false, "info": "Off: every product says Price at launch and Add to cart is disabled, even if a price is set in Shopify. Turn on once supplier quotes are final." }
+    ]
+  },
+  {
+    "name": "Availability and shipping",
+    "settings": [
+      { "type": "paragraph", "content": "Each product's availability mode comes from its custom.availability metafield. Empty fields below show a [confirm] marker on the site so nothing is invented." },
+      { "type": "text", "id": "made_to_order_delivery", "label": "Made to order: estimated delivery window", "info": "Example: 4 to 6 weeks" },
+      { "type": "text", "id": "in_stock_ship", "label": "In stock: ships within", "info": "Example: 2 business days" },
+      { "type": "text", "id": "preorder_ship", "label": "Preorder: expected ship window" },
+      { "type": "textarea", "id": "preorder_policy", "label": "Preorder charge policy", "info": "State plainly when the customer is charged." },
+      { "type": "text", "id": "shipping_cost", "label": "Shipping cost" },
+      { "type": "text", "id": "shipping_regions", "label": "Where you ship" },
+      { "type": "header", "content": "Holiday orders" },
+      { "type": "text", "id": "holiday_cutoff", "label": "Holiday order cutoff date", "info": "Leave blank unless a date is confirmed." },
+      { "type": "checkbox", "id": "holiday_confirmed", "label": "Cutoff date is confirmed", "default": false, "info": "Until a date is set and this is ticked, the site says it cannot promise delivery before December 25." }
+    ]
+  },
+  {
+    "name": "Returns",
+    "settings": [
+      { "type": "text", "id": "return_days", "label": "Return window in days", "info": "Example: 30" },
+      { "type": "textarea", "id": "return_conditions", "label": "Return conditions", "info": "Example: unworn, with tags" },
+      { "type": "text", "id": "return_shipping", "label": "Who pays return shipping" }
+    ]
+  },
+  {
+    "name": "Contact and social",
+    "settings": [
+      { "type": "text", "id": "contact_email", "label": "Contact email" },
+      { "type": "text", "id": "instagram_handle", "label": "Instagram handle", "info": "Without the @." }
+    ]
+  }
+]

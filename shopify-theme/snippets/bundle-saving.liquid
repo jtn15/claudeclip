@@ -1,0 +1,24 @@
+{%- comment -%}
+  Saving for a bundle product, only when prices are on and every piece and the bundle have prices, and the bundle really is cheaper.
+  Param: bundle (a product with the custom.bundle_items metafield)
+{%- endcomment -%}
+{%- assign items = bundle.metafields.custom.bundle_items.value -%}
+{%- assign open_slots = bundle.metafields.custom.bundle_open_slots.value | default: 0 -%}
+{%- assign separate = 0 -%}
+{%- assign all_priced = true -%}
+{%- for item in items -%}
+  {%- if item.price > 0 -%}
+    {%- assign separate = separate | plus: item.price -%}
+  {%- else -%}
+    {%- assign all_priced = false -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- if settings.show_prices and all_priced and bundle.price > 0 and open_slots < 1 -%}
+  {%- assign saved = separate | minus: bundle.price -%}
+  {%- if saved > 0 -%}
+    {%- assign pct = saved | times: 100.0 | divided_by: separate | round -%}
+    <p class="saving">Save {{ saved | money_without_trailing_zeros }} ({{ pct }}%) against buying separately at {{ separate | money_without_trailing_zeros }}.</p>
+  {%- endif -%}
+{%- else -%}
+  <p class="small">The saving is shown once prices are set.</p>
+{%- endif -%}

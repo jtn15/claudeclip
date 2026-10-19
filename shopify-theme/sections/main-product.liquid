@@ -1,0 +1,193 @@
+{%- comment -%}
+  Product page and bundle page in one section.
+  A product is a bundle when it has the custom.bundle_items metafield (list of products).
+{%- endcomment -%}
+{%- assign bundle_items = product.metafields.custom.bundle_items.value -%}
+{%- assign is_bundle = false -%}
+{%- if bundle_items != blank -%}{%- assign is_bundle = true -%}{%- endif -%}
+{%- assign open_slots = product.metafields.custom.bundle_open_slots.value | default: 0 -%}
+{%- assign tier = product.metafields.custom.tier.value -%}
+{%- assign color = product.metafields.custom.color.value -%}
+{%- assign can_buy = false -%}
+{%- if settings.show_prices and product.price > 0 and product.available and open_slots < 1 -%}{%- assign can_buy = true -%}{%- endif -%}
+
+<section style="padding-top: 2.5rem">
+  <div class="wrap">
+    <p class="crumbs label">
+      {%- if is_bundle -%}<a href="{{ routes.root_url }}collections/bundles">Bundles</a>{%- else -%}<a href="{{ routes.all_products_collection_url }}">Shop</a>{%- endif %} / {{ product.title }}
+    </p>
+    <div class="product">
+      <div class="product-gallery">
+        {%- assign cap_bundle = 'Bundle photo: ' | append: product.title | append: ', flat lay' -%}
+        {%- assign cap_front = 'Product photo: ' | append: product.title | append: ', front' -%}
+        {%- assign cap_back = 'Product photo: ' | append: product.title | append: ', back' -%}
+        {%- assign cap_collar = 'Product photo: ' | append: product.title | append: ', collar and zipper' -%}
+        {%- assign cap_texture = 'Product photo: ' | append: product.title | append: ', knit texture' -%}
+        {%- if is_bundle -%}
+          {% render 'media-or-placeholder', media: product.featured_image, caption: cap_bundle, alt: product.title, eager: true %}
+          {%- for item in bundle_items -%}
+            {%- assign cap_item = 'Product photo: ' | append: item.title -%}
+            {% render 'media-or-placeholder', media: item.featured_image, caption: cap_item, alt: item.title %}
+          {%- endfor -%}
+        {%- elsif product.images.size > 0 -%}
+          {%- for image in product.images limit: 8 -%}
+            {% render 'media-or-placeholder', media: image, caption: 'Product photo', alt: product.title %}
+          {%- endfor -%}
+        {%- else -%}
+          {% render 'media-or-placeholder', caption: cap_front, alt: product.title %}
+          {% render 'media-or-placeholder', caption: cap_back, alt: product.title %}
+          {% render 'media-or-placeholder', caption: cap_collar, alt: product.title %}
+          {% render 'media-or-placeholder', caption: cap_texture, alt: product.title %}
+        {%- endif -%}
+      </div>
+
+      <div class="product-info">
+        <p class="label muted">
+          {%- if is_bundle -%}Bundle{%- elsif tier != blank -%}{{ tier }}{%- else -%}{% render 'todo', label: 'tier metafield' %}{%- endif -%}
+        </p>
+        <h1>{{ product.title }}</h1>
+        <p>{% render 'price', product: product %}</p>
+
+        {%- if is_bundle -%}
+          <p class="muted">
+            {%- for item in bundle_items -%}{{ item.title | downcase }}{% unless forloop.last %} + {% endunless %}{%- endfor -%}
+            {%- if open_slots > 0 %} + one more piece {% render 'todo', label: 'second piece for this bundle' %}{% endif -%}.
+          </p>
+          {% render 'bundle-saving', bundle: product %}
+        {%- else -%}
+          <p class="card-sub">
+            {%- if color != blank %}{% render 'swatch', color: color %}{{ color }}{% else %}{% render 'todo', label: 'color metafield' %}{% endif -%}
+          </p>
+        {%- endif -%}
+
+        {%- if product.description != blank -%}
+          <div>{{ product.description }}</div>
+        {%- endif -%}
+
+        {% render 'availability', product: product %}
+
+        {%- form 'product', product, id: 'product-form', novalidate: 'novalidate' -%}
+          {%- if is_bundle -%}
+            {%- capture includes -%}{%- for item in bundle_items -%}{{ item.title }}{% unless forloop.last %}, {% endunless %}{%- endfor -%}{%- endcapture -%}
+            <input type="hidden" name="properties[Includes]" value="{{ includes | escape }}">
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            <div class="bundle-sizes">
+              {%- for item in bundle_items -%}
+                {%- for option in item.options_with_values -%}
+                  {%- if option.name == 'Size' and option.values.size > 1 -%}
+                    <label>
+                      <span class="label">{{ item.title }} size</span>
+                      <select name="properties[{{ item.title }} size]" required>
+                        <option value="">Choose size</option>
+                        {%- for value in option.values -%}<option value="{{ value | escape }}">{{ value }}</option>{%- endfor -%}
+                      </select>
+                    </label>
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endfor -%}
+            </div>
+            <p class="small"><a href="{{ routes.root_url }}pages/size-guide">Size guide</a></p>
+          {%- elsif product.has_only_default_variant -%}
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            <p class="muted">One size.</p>
+          {%- else -%}
+            <div class="size-row">
+              <label class="label" for="size">Size</label>
+              <a class="small" href="{{ routes.root_url }}pages/size-guide">Size guide</a>
+            </div>
+            <select id="size" name="id" required>
+              <option value="">Choose a size</option>
+              {%- for variant in product.variants -%}
+                <option value="{{ variant.id }}"{% unless variant.available %} disabled{% endunless %}>{{ variant.title }}</option>
+              {%- endfor -%}
+            </select>
+          {%- endif -%}
+
+          <div style="margin-top: 1.25rem">
+            {%- if can_buy -%}
+              <button class="btn btn-block" type="submit" name="add">Add{% if is_bundle %} bundle{% endif %} to cart</button>
+            {%- else -%}
+              <button class="btn btn-block" type="button" disabled>Add{% if is_bundle %} bundle{% endif %} to cart</button>
+              <p class="small" style="margin-top: 0.75rem">
+                {%- if open_slots > 0 -%}Choose the last piece first.
+                {%- elsif product.available == false -%}Sold out.
+                {%- else -%}Available once the price is set.{%- endif -%}
+              </p>
+            {%- endif -%}
+          </div>
+        {%- endform -%}
+
+        {%- unless is_bundle -%}
+          {%- capture offer_rows -%}
+            {%- for bundle in collections['bundles'].products -%}
+              {%- assign b_items = bundle.metafields.custom.bundle_items.value -%}
+              {%- assign includes_this = false -%}
+              {%- for b_item in b_items -%}
+                {%- if b_item.id == product.id -%}{%- assign includes_this = true -%}{%- endif -%}
+              {%- endfor -%}
+              {%- if includes_this -%}
+                <a class="offer" href="{{ bundle.url }}">
+                  <span>
+                    <span class="card-name">{{ bundle.title }}</span>
+                    <span class="card-sub">{%- for b_item in b_items -%}{{ b_item.title }}{% unless forloop.last %} + {% endunless %}{%- endfor -%}</span>
+                  </span>
+                  <span>{% render 'price', product: bundle %}</span>
+                </a>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endcapture -%}
+          {%- if offer_rows contains 'class="offer"' -%}
+            <div class="bundle-offer">
+              <p class="label">Also available as a bundle</p>
+              {{ offer_rows }}
+            </div>
+          {%- endif -%}
+        {%- endunless -%}
+
+        {% render 'holiday-notice' %}
+        <p class="small">{% render 'returns-line' %} See <a href="{{ routes.root_url }}pages/shipping-returns">shipping and returns</a>.</p>
+
+        <div style="margin-top: 2rem">
+          {%- if is_bundle -%}
+            <details open>
+              <summary class="label">What is included</summary>
+              <div>
+                <ul style="margin: 0; padding-left: 1.1rem">
+                  {%- for item in bundle_items -%}<li><a href="{{ item.url }}">{{ item.title }}</a></li>{%- endfor -%}
+                  {%- if open_slots > 0 -%}<li>One more piece {% render 'todo', label: 'second piece for this bundle' %}</li>{%- endif -%}
+                </ul>
+              </div>
+            </details>
+            <details>
+              <summary class="label">Fabric, fit and care</summary>
+              <div><p>Each piece lists its own fiber content, fit and care on its page. Open a piece above to read it.</p></div>
+            </details>
+          {%- else -%}
+            <details open>
+              <summary class="label">Fabric and fiber content</summary>
+              <div><p>{% if product.metafields.custom.fiber.value != blank %}{{ product.metafields.custom.fiber.value | escape | newline_to_br }}{% else %}{% render 'todo', label: 'fiber content, required by law for US garments' %}{% endif %}</p></div>
+            </details>
+            <details>
+              <summary class="label">Fit</summary>
+              <div><p>{% if product.metafields.custom.fit.value != blank %}{{ product.metafields.custom.fit.value | escape | newline_to_br }}{% else %}{% render 'todo', label: 'fit note' %}{% endif %}</p></div>
+            </details>
+            <details>
+              <summary class="label">Care</summary>
+              <div><p>{% if product.metafields.custom.care.value != blank %}{{ product.metafields.custom.care.value | escape | newline_to_br }}{% else %}{% render 'todo', label: 'care instructions' %}{% endif %}</p></div>
+            </details>
+          {%- endif -%}
+          <details>
+            <summary class="label">Shipping and returns</summary>
+            <div><p><a href="{{ routes.root_url }}pages/shipping-returns">Full shipping and returns policy</a></p></div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product"
+}
+{% endschema %}

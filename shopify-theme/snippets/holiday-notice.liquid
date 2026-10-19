@@ -1,0 +1,5 @@
+{%- if settings.holiday_cutoff != blank and settings.holiday_confirmed -%}
+  <p class="small">Holiday orders: orders placed by {{ settings.holiday_cutoff }} are expected to arrive before December 25.</p>
+{%- else -%}
+  <p class="small">We cannot yet promise delivery before December 25. {% render 'todo', label: 'holiday cutoff date, then tick "confirmed" in theme settings' %}</p>
+{%- endif -%}

@@ -1,0 +1,22 @@
+{%- comment -%}
+  Honest availability line. Param: product
+  Mode comes from the custom.availability metafield: made_to_order, in_stock or preorder.
+  Windows come from theme settings; empty ones show a [confirm] marker.
+{%- endcomment -%}
+{%- assign mode = product.metafields.custom.availability.value -%}
+<p class="status-line">
+  {%- case mode -%}
+    {%- when 'made_to_order' -%}
+      Made to order. Estimated delivery:
+      {% if settings.made_to_order_delivery != blank %}{{ settings.made_to_order_delivery }}{% else %}{% render 'todo', label: 'made-to-order delivery window' %}{% endif %}.
+    {%- when 'in_stock' -%}
+      In stock. Ships
+      {% if settings.in_stock_ship != blank %}{{ settings.in_stock_ship }}{% else %}{% render 'todo', label: 'in-stock ship time' %}{% endif %}.
+    {%- when 'preorder' -%}
+      Preorder. Expected to ship
+      {% if settings.preorder_ship != blank %}{{ settings.preorder_ship }}{% else %}{% render 'todo', label: 'preorder ship window' %}{% endif %}.
+      {% if settings.preorder_policy != blank %}{{ settings.preorder_policy }}{% else %}{% render 'todo', label: 'preorder charge policy, stated plainly' %}{% endif %}
+    {%- else -%}
+      {% render 'todo', label: 'availability mode: set the custom.availability metafield on this product' %}
+  {%- endcase -%}
+</p>

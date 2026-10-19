@@ -1,0 +1,2 @@
+Returns:
+{%- if settings.return_days != blank %} {{ settings.return_days }} days{% else %} {% render 'todo', label: 'return window' %}{% endif %}.

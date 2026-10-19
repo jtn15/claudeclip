@@ -1,0 +1,42 @@
+<section class="page-head"><div class="col"><h1>{{ page.title }}</h1></div></section>
+<section style="padding-top: 1rem">
+  <div class="col prose">
+    <p>Garment measurements in inches, taken flat. Compare them with a piece you already wear and like.</p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Size</th><th>Chest</th><th>Length</th><th>Sleeve</th></tr></thead>
+        <tbody>
+          {%- for block in section.blocks -%}
+            <tr {{ block.shopify_attributes }}>
+              <td>{{ block.settings.size }}</td>
+              <td>{% if block.settings.chest != blank %}{{ block.settings.chest }}{% else %}{% render 'todo', label: 'chest' %}{% endif %}</td>
+              <td>{% if block.settings.length != blank %}{{ block.settings.length }}{% else %}{% render 'todo', label: 'length' %}{% endif %}</td>
+              <td>{% if block.settings.sleeve != blank %}{{ block.settings.sleeve }}{% else %}{% render 'todo', label: 'sleeve' %}{% endif %}</td>
+            </tr>
+          {%- endfor -%}
+        </tbody>
+      </table>
+    </div>
+    <h2>How to measure</h2>
+    <p>Lay a favorite sweater flat. Measure across the chest, from underarm to underarm, and double it. Measure length from the high point of the shoulder to the hem.</p>
+    <p>Scarf and beanie are one size. Questions about fit: <a href="{{ routes.root_url }}pages/contact">contact us</a>.</p>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Size guide",
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Size row",
+      "settings": [
+        { "type": "text", "id": "size", "label": "Size", "default": "M" },
+        { "type": "text", "id": "chest", "label": "Chest (inches)" },
+        { "type": "text", "id": "length", "label": "Length (inches)" },
+        { "type": "text", "id": "sleeve", "label": "Sleeve (inches)" }
+      ]
+    }
+  ]
+}
+{% endschema %}

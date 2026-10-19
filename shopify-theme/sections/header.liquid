@@ -1,0 +1,31 @@
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="{{ routes.root_url }}" aria-label="{{ shop.name }}, home">
+      {% render 'logo-lockup', class: 'logo-lockup' %}
+    </a>
+    <nav id="site-nav" class="nav label" aria-label="Main">
+      {%- for link in linklists[section.settings.menu].links -%}
+        <a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %}>{{ link.title }}</a>
+      {%- endfor -%}
+    </nav>
+    <div class="header-right label">
+      <a class="cart-link" href="{{ routes.cart_url }}">{{ 'general.cart' | t }} ({{ cart.item_count }})</a>
+      <button class="menu-btn label" type="button" aria-expanded="false" aria-controls="site-nav">{{ 'general.menu' | t }}</button>
+    </div>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu",
+      "info": "Use four items: Shop, Bundles, Our Story, Contact."
+    }
+  ]
+}
+{% endschema %}

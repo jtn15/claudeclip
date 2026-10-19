@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-collection",
+      "settings": {
+        "show_filters": false,
+        "intro": "Four sets. Open one to choose sizes and see what is in it."
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

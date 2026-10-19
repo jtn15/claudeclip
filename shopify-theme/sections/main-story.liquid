@@ -1,0 +1,32 @@
+<section class="page-head"><div class="col"><h1>{{ page.title }}</h1></div></section>
+<section style="padding-top: 1rem">
+  <div class="col prose">
+    <p class="lede">{{ settings.story_sentence }} Est. {{ settings.established }}.
+      {%- if settings.location != blank %} {{ settings.location }}{% else %} {% render 'todo', label: 'location, e.g. Phoenix, Arizona' %}{% endif -%}
+    </p>
+    {{ section.settings.body }}
+  </div>
+</section>
+<section class="story-block">
+  <div class="col">
+    <h2 style="text-align: center">Join the waitlist</h2>
+    <p class="muted" style="text-align: center; margin-left: auto; margin-right: auto">Doors open {{ settings.launch_label }}.</p>
+    <div style="display: flex; flex-direction: column; align-items: center">
+      {% render 'signup-form', form_id: 'story', tag: 'waitlist', button: 'Notify me' %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Our story",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Story paragraphs",
+      "default": "<p>Maison Rivault begins with a narrow idea: a small set of knitwear, in four colors, that goes together without effort. Navy, camel, olive and cream. Pieces that sit over and under each other, so a cold morning and a mild afternoon call for the same few things.</p><p>The line has two tiers, Signature and Essentials. Each style comes in one color at launch, and each product page says plainly how the piece is made available and when to expect it.</p><p>We are a new brand, and we would rather say so than borrow a history. What we can offer is a short list of well-chosen pieces, described plainly, with fabric, fit and care stated on every page.</p>"
+    }
+  ]
+}
+{% endschema %}

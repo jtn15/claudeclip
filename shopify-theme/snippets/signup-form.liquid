@@ -1,0 +1,18 @@
+{%- comment -%}
+  Email capture using Shopify's own customer form, so signups land in Customers with marketing consent
+  and sync to Shopify Email or Klaviyo. Params: form_id, tag, button
+{%- endcomment -%}
+{%- form 'customer', id: form_id, class: 'signup' -%}
+  <input type="hidden" name="contact[tags]" value="{{ tag | default: 'waitlist' }}">
+  <label class="label" style="flex-basis: 100%" for="email-{{ form_id }}">Email address</label>
+  <input id="email-{{ form_id }}" type="email" name="contact[email]" autocomplete="email" placeholder="you@example.com" required>
+  <button class="btn" type="submit">{{ button | default: 'Notify me' }}</button>
+{%- endform -%}
+{%- if form.posted_successfully? -%}
+  <p class="form-msg" role="status">Thank you. We will email you when doors open, {{ settings.launch_label }}.</p>
+{%- elsif form.errors -%}
+  <p class="form-msg" role="alert">{{ form.errors | default_errors }}</p>
+{%- else -%}
+  <p class="form-msg" role="status" aria-live="polite"></p>
+{%- endif -%}
+<p class="small">We email once when doors open, and about what comes next. Unsubscribe any time.</p>

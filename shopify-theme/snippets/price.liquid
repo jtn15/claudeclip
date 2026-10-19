@@ -1,0 +1,6 @@
+{%- comment -%}Price, or "Price at launch" until prices are switched on and set. Param: product{%- endcomment -%}
+{%- if settings.show_prices and product.price > 0 -%}
+  <span class="price">{{ product.price | money_without_trailing_zeros }}</span>
+{%- else -%}
+  <span class="price-tbd">Price at launch</span>
+{%- endif -%}

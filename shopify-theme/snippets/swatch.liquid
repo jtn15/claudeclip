@@ -1,0 +1,10 @@
+{%- comment -%}Color dot for the custom.color metafield (navy, camel, olive, cream). Param: color{%- endcomment -%}
+{%- assign key = color | downcase -%}
+{%- case key -%}
+  {%- when 'navy' -%}{%- assign hex = '#1F2A44' -%}
+  {%- when 'camel' -%}{%- assign hex = '#B58B5A' -%}
+  {%- when 'olive' -%}{%- assign hex = '#5E6038' -%}
+  {%- when 'cream' -%}{%- assign hex = '#E8DFCB' -%}
+  {%- else -%}{%- assign hex = '#DDD5C4' -%}
+{%- endcase -%}
+<span class="swatch" style="background: {{ hex }}"></span>

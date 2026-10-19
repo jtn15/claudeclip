@@ -1,0 +1,86 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-faq",
+      "blocks": {
+        "q0": {
+          "type": "question",
+          "settings": {
+            "question": "When do doors open?",
+            "answer": "<p>Doors open mid-December. Join the waitlist on the home page and we will email once when they do.</p>"
+          }
+        },
+        "q1": {
+          "type": "question",
+          "settings": {
+            "question": "What are Signature and Essentials?",
+            "answer": "<p>Two tiers of the same line. Each product page says which tier it belongs to and how it is made available.</p>"
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "question": "What does made to order mean?",
+            "answer": "<p>The piece is made after you order. The estimated delivery window is on each product page and on the shipping and returns page.</p>"
+          }
+        },
+        "q3": {
+          "type": "question",
+          "settings": {
+            "question": "What is a preorder?",
+            "answer": "<p>A preorder is not made yet. The expected ship window and when you are charged are on the product page and the shipping and returns page.</p>"
+          }
+        },
+        "q4": {
+          "type": "question",
+          "settings": {
+            "question": "What colors are available?",
+            "answer": "<p>Four colors across the line: navy, camel, olive and cream. Each style comes in one color at launch.</p>"
+          }
+        },
+        "q5": {
+          "type": "question",
+          "settings": {
+            "question": "What comes next?",
+            "answer": "<p>A cardigan, trousers and footwear. They are not for sale yet.</p>"
+          }
+        },
+        "q6": {
+          "type": "question",
+          "settings": {
+            "question": "Will pieces be restocked?"
+          }
+        },
+        "q7": {
+          "type": "question",
+          "settings": {
+            "question": "How do I find my size?",
+            "answer": "<p>See the size guide.</p>"
+          }
+        },
+        "q8": {
+          "type": "question",
+          "settings": {
+            "question": "What is your return policy?",
+            "answer": "<p>See shipping and returns.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q0",
+        "q1",
+        "q2",
+        "q3",
+        "q4",
+        "q5",
+        "q6",
+        "q7",
+        "q8"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

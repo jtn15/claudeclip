@@ -1,0 +1,10 @@
+{%- comment -%}
+  A product photo, or a flat cream placeholder with a caption until real photography exists.
+  Params: media (optional), caption, alt, ratio (default "4 / 5"), eager (optional)
+{%- endcomment -%}
+{%- assign ratio = ratio | default: '4 / 5' -%}
+{%- if media != blank -%}
+  {{ media | image_url: width: 1100 | image_tag: loading: loading, alt: media.alt | default: alt, class: 'photo', style: 'aspect-ratio: 4 / 5' }}
+{%- else -%}
+  <div class="ph" style="aspect-ratio: {{ ratio }}" role="img" aria-label="{{ alt | default: caption | escape }}"><span>{{ caption }}</span></div>
+{%- endif -%}

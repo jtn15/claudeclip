@@ -1,0 +1,66 @@
+{%- comment -%}
+  Collection page with simple tier and type filters. Filters use product tags:
+  tier-signature, tier-essentials, type-tops, type-accessories (Shopify's built-in tag filtering).
+{%- endcomment -%}
+{%- assign tier_tags = 'tier-signature,tier-essentials' | split: ',' -%}
+{%- assign type_tags = 'type-tops,type-accessories' | split: ',' -%}
+{%- assign cur_tier = '' -%}
+{%- assign cur_type = '' -%}
+{%- for t in current_tags -%}
+  {%- assign t_handle = t | handleize -%}
+  {%- if t_handle contains 'tier-' -%}{%- assign cur_tier = t_handle -%}{%- endif -%}
+  {%- if t_handle contains 'type-' -%}{%- assign cur_type = t_handle -%}{%- endif -%}
+{%- endfor -%}
+
+<section class="page-head">
+  <div class="wrap">
+    <h1>{{ collection.title }}</h1>
+    {%- if section.settings.intro != blank -%}<p class="lede">{{ section.settings.intro }}</p>{%- endif -%}
+  </div>
+</section>
+<section style="padding-top: 1rem">
+  <div class="wrap">
+    {%- if section.settings.show_filters -%}
+      <div class="filters" role="group" aria-label="Filter by tier">
+        <a href="{{ collection.url }}{% if cur_type != '' %}/{{ cur_type }}{% endif %}"{% if cur_tier == '' %} aria-current="true"{% endif %}>All tiers</a>
+        {%- for v in tier_tags -%}
+          <a href="{{ collection.url }}/{{ v }}{% if cur_type != '' %}+{{ cur_type }}{% endif %}"{% if cur_tier == v %} aria-current="true"{% endif %}>{{ v | remove: 'tier-' | capitalize }}</a>
+        {%- endfor -%}
+      </div>
+      <div class="filters" role="group" aria-label="Filter by type">
+        <a href="{{ collection.url }}{% if cur_tier != '' %}/{{ cur_tier }}{% endif %}"{% if cur_type == '' %} aria-current="true"{% endif %}>All types</a>
+        {%- for v in type_tags -%}
+          <a href="{{ collection.url }}/{% if cur_tier != '' %}{{ cur_tier }}+{% endif %}{{ v }}"{% if cur_type == v %} aria-current="true"{% endif %}>{{ v | remove: 'type-' | capitalize }}</a>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- paginate collection.products by 24 -%}
+      {%- if collection.products.size == 0 -%}
+        <p class="muted">No products here yet.</p>
+      {%- else -%}
+        <div class="grid">
+          {%- for product in collection.products -%}
+            {% render 'product-card', product: product %}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+      {%- if paginate.pages > 1 -%}
+        <nav class="pagination label" aria-label="Pagination">
+          {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}">Previous</a>{%- endif -%}
+          {%- if paginate.next -%}<a href="{{ paginate.next.url }}">Next</a>{%- endif -%}
+        </nav>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection",
+  "settings": [
+    { "type": "textarea", "id": "intro", "label": "Intro line" },
+    { "type": "checkbox", "id": "show_filters", "label": "Show tier and type filters", "default": true }
+  ]
+}
+{% endschema %}
