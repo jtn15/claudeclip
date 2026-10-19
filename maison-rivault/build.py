@@ -273,46 +273,70 @@ def bundle_contents(b):
     return "".join(rows)
 
 
-def bundle_saving_html(b):
-    """A saving is shown only when the bundle and every component have final prices."""
+def bundle_saving(b):
+    """(saved, separate) only when the bundle and every piece have final prices and the bundle really is cheaper."""
     parts = [BY_ID[i] for i in b["items"]]
     if b["open_slots"] or not priced(b) or not all(priced(p) for p in parts):
-        return '<p class="small">The saving is shown once prices are set.</p>'
+        return None
     separate = sum(p["price"] for p in parts)
     saved = separate - b["price"]
-    if saved <= 0:
-        return ""
-    return (f'<p class="saving">Save {money(saved)} ({round(100 * saved / separate)}%) against buying '
-            f'separately at {money(separate)}.</p>')
+    return (saved, separate) if saved > 0 else None
 
 
-def bundle_block(b, full=False, root=""):
-    if not full:
-        cta = f'<a class="btn btn-quiet" href="{root}bundles.html#{b["slug"]}">View bundle</a>'
-    else:
-        selects = ""
-        for i in b["items"]:
-            p = BY_ID[i]
-            if p["sizes"] == ["One size"]:
-                continue
-            opts = "".join(f'<option value="{s}">{s}</option>' for s in p["sizes"])
-            selects += (f'<label><span class="label">{esc(p["name"])} size</span>'
-                        f'<select data-item="{p["id"]}"><option value="">Choose size</option>{opts}</select></label>')
-        can_buy = priced(b) and not b["open_slots"]
-        disabled = "" if can_buy else " disabled"
-        why = "" if can_buy else '<p class="small">Available once the price is set.</p>'
-        cta = f"""<div class="bundle-sizes">{selects}</div>
-<button class="btn" type="button" data-add-bundle="{b['id']}"{disabled}>Add bundle to cart</button>
-{why}<p class="form-msg small bundle-msg" role="status" aria-live="polite"></p>"""
-    status = f'<p class="small">{todo(b["contents_status"]) }</p>' if b["contents_status"] not in ("the whole Signature range",) else ""
+def bundle_saving_html(b):
+    s = bundle_saving(b)
+    if s:
+        return (f'<p class="saving">Save {money(s[0])} ({round(100 * s[0] / s[1])}%) against buying '
+                f'separately at {money(s[1])}.</p>')
+    if b["open_slots"] or not priced(b) or not all(priced(BY_ID[i]) for i in b["items"]):
+        return '<p class="small">The saving is shown once prices are set.</p>'
+    return ""
+
+
+def bundle_names(b):
+    names = [BY_ID[i]["name"] for i in b["items"]] + ["one more piece"] * b["open_slots"]
+    return " + ".join(names)
+
+
+def bundle_card(b, root="", show_status=False):
+    status = f'<p class="small">{todo(b["contents_status"])}</p>' if show_status and "whole" not in b["contents_status"] else ""
     return f"""<article class="bundle" id="{b['slug']}">
-  <h3>{esc(b['name'])}</h3>
+  <h3><a href="{root}bundles/{b['slug']}.html" style="text-decoration:none">{esc(b['name'])}</a></h3>
   <p>{price_html(b)}</p>
   <ul>{bundle_contents(b)}</ul>
   {bundle_saving_html(b)}
-  {status if full else ''}
-  {cta}
+  {status}
+  <a class="btn btn-quiet" href="{root}bundles/{b['slug']}.html">View bundle</a>
 </article>"""
+
+
+def bundles_for(product_id):
+    return [b for b in BUNDLES if product_id in b["items"]]
+
+
+def bundle_offer_html(p, root="../"):
+    """Shown on a product page: the bundles this piece belongs to."""
+    offers = bundles_for(p["id"])
+    if not offers:
+        return ""
+    rows = ""
+    for b in offers:
+        s = bundle_saving(b)
+        save = f' <span class="saving">Save {money(s[0])}</span>' if s else ""
+        rows += (f'<a class="offer" href="{root}bundles/{b["slug"]}.html">'
+                 f'<span><span class="card-name">{esc(b["name"])}</span>'
+                 f'<span class="card-sub">{esc(bundle_names(b))}</span></span>'
+                 f'<span>{price_html(b)}{save}</span></a>')
+    return f'<div class="bundle-offer"><p class="label">Also available as a bundle</p>{rows}</div>'
+
+
+def bundle_availability_html(b):
+    parts = [BY_ID[i] for i in b["items"]]
+    if len({p["availability"] for p in parts}) == 1:
+        return availability_html(parts[0])
+    rows = "".join(f'<li>{esc(p["name"])}: {esc(MODES[p["availability"]])}</li>' for p in parts)
+    return (f'<div class="status-line"><p style="margin:0 0 0.4rem">Availability differs by piece:</p>'
+            f'<ul style="margin:0;padding-left:1.1rem">{rows}</ul></div>')
 
 
 def tier_section(tier_id, root=""):
@@ -352,7 +376,7 @@ def page_waitlist(path="index.html"):
 
 
 def page_home():
-    bundles = "".join(bundle_block(b) for b in BUNDLES)
+    bundles = "".join(bundle_card(b) for b in BUNDLES)
     loc = esc(CFG["location"]) if CFG["location"] else todo("location, e.g. Phoenix, Arizona")
     body = f"""
 <section class="hero">
@@ -424,11 +448,11 @@ def page_shop():
 
 
 def page_bundles():
-    blocks = "".join(bundle_block(b, full=True) for b in BUNDLES)
+    blocks = "".join(bundle_card(b, show_status=True) for b in BUNDLES)
     body = f"""
 <section class="page-head"><div class="wrap">
   <h1>Bundles</h1>
-  <p class="lede">Four sets. Each shows what is in it, and the saving once prices are set.</p>
+  <p class="lede">Four sets. Open one to choose sizes, see what is in it, and the saving once prices are set.</p>
 </div></section>
 <section style="padding-top:1rem"><div class="wrap"><div class="bundles">{blocks}</div></div></section>"""
     return page("bundles.html", "Bundles", "Four bundles: The Layering Bundle, The Cold Morning Set, The Weekend Layers and The Full Rotation.", body)
@@ -467,6 +491,7 @@ def page_product(p):
       {availability_html(p)}
       {size_ui}
       <div style="margin-top:1.25rem">{cta}</div>
+      {bundle_offer_html(p)}
       {holiday_html()}
       <p class="small">Returns: {ret_line}. See <a href="../shipping-returns.html">shipping and returns</a>.</p>
       <div style="margin-top:2rem">
@@ -480,6 +505,61 @@ def page_product(p):
 </div></section>"""
     return page(f"products/{p['slug']}.html", f"{tier_name(p)} {p['name'].lower()} in {c['name'].lower()}",
                 f"{tier_name(p)} {p['name'].lower()} in {c['name'].lower()}. {p['summary']}", body)
+
+
+def page_bundle(b):
+    parts = [BY_ID[i] for i in b["items"]]
+    gallery = ph(f"Bundle photo: {b['name']}, flat lay", "4 / 5", f"{b['name']}, flat lay") + "".join(
+        image(p["images"][0], "4 / 5") for p in parts)
+    selects = ""
+    for p in parts:
+        if p["sizes"] == ["One size"]:
+            continue
+        opts = "".join(f'<option value="{s}">{s}</option>' for s in p["sizes"])
+        selects += (f'<label><span class="label">{esc(p["name"])} size</span>'
+                    f'<select data-item="{p["id"]}"><option value="">Choose size</option>{opts}</select></label>')
+    size_link = '<p class="small"><a href="../size-guide.html">Size guide</a></p>' if selects else ""
+    can_buy = priced(b) and not b["open_slots"]
+    if can_buy:
+        cta = f'<button class="btn btn-block" type="button" data-add-bundle="{b["id"]}" data-cart-url="../cart.html">Add bundle to cart</button>'
+    else:
+        reason = "Choose the last piece first." if b["open_slots"] else "Available once the price is set."
+        cta = (f'<button class="btn btn-block" type="button" disabled>Add bundle to cart</button>'
+               f'<p class="small" style="margin-top:0.75rem">{reason}</p>')
+    includes = "".join(f'<li><a href="../products/{p["slug"]}.html">{esc(tier_name(p))} {esc(p["name"].lower())}</a>, '
+                       f'{esc(color_of(p)["name"])}</li>' for p in parts)
+    includes += "".join(f"<li>One more piece {todo('second piece for ' + b['name'])}</li>" for _ in range(b["open_slots"]))
+    ret = CFG["returns"]
+    ret_line = val(ret["window_days"] + " days" if ret["window_days"] else "", "return window")
+    body = f"""
+<section style="padding-top:2.5rem"><div class="wrap">
+  <p class="crumbs label"><a href="../bundles.html">Bundles</a> / {esc(b['name'])}</p>
+  <div class="product">
+    <div class="product-gallery">{gallery}</div>
+    <div class="product-info" data-bundle>
+      <p class="label muted">Bundle</p>
+      <h1>{esc(b['name'])}</h1>
+      <p>{price_html(b)}</p>
+      <p class="muted">{esc(bundle_names(b))}.</p>
+      {bundle_saving_html(b)}
+      <p class="small">{todo(b['contents_status'])}</p>
+      {bundle_availability_html(b)}
+      <div class="bundle-sizes">{selects}</div>
+      {size_link}
+      <p class="form-msg small bundle-msg" role="status" aria-live="polite"></p>
+      <div style="margin-top:0.5rem">{cta}</div>
+      {holiday_html()}
+      <p class="small">Returns: {ret_line}. See <a href="../shipping-returns.html">shipping and returns</a>.</p>
+      <div style="margin-top:2rem">
+        <details open><summary class="label">What is included</summary><div><ul style="margin:0;padding-left:1.1rem">{includes}</ul></div></details>
+        <details><summary class="label">Fabric, fit and care</summary><div><p>Each piece lists its own fiber content, fit and care on its page. Open a piece above to read it.</p></div></details>
+        <details><summary class="label">Shipping and returns</summary><div><p><a href="../shipping-returns.html">Full shipping and returns policy</a></p></div></details>
+      </div>
+    </div>
+  </div>
+</div></section>"""
+    return page(f"bundles/{b['slug']}.html", b["name"],
+                f"{b['name']}: {bundle_names(b)}.", body)
 
 
 def page_story():
@@ -640,7 +720,7 @@ def runtime_data():
 def full_store():
     pages = [page_home(), page_shop(), page_bundles(), page_story(), page_coming_next(), page_size(),
              page_shipping(), page_faq(), page_contact(), page_legal("privacy"), page_legal("terms"), page_cart()]
-    return pages + [page_product(p) for p in PRODUCTS]
+    return pages + [page_product(p) for p in PRODUCTS] + [page_bundle(x) for x in BUNDLES]
 
 
 def waitlist_site():

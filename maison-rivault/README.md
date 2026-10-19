@@ -39,6 +39,7 @@ Deploy `site/` only. `preview/` is the full store with prices hidden, marked noi
 
 - **No invented facts.** Anything not yet confirmed shows as an orange `[confirm: ...]` marker, and `tools/check_placeholders.py` counts them. Origin, "handmade", "limited edition" and named yarns are never stated. The only date is "Est. 2026".
 - **Prices:** every price is `null` with `price_status: "tbd"`. One real price per item, no was-prices, no timers, no stock banners. A bundle saving appears only when the bundle and every piece have prices, and only if the bundle really is cheaper.
+- **Bundles** have their own pages (`bundles/<slug>.html`) with size selectors, availability and what is included. Every product page also lists the bundles that include that piece, with the saving once prices exist, so a bundle can be offered at the point of sale.
 - **Availability:** each product is `made_to_order`, `in_stock` or `preorder`. The page states the mode and the ship window from `shipping.*` in the config. Every mode is currently marked unconfirmed.
 - **Holiday:** until `holiday.cutoff_date` is set and `cutoff_confirmed` is `true`, product and shipping pages say "We cannot yet promise delivery before December 25."
 - **Photos:** every image slot is a flat cream placeholder with a caption. Swap one by setting `"src"` on that image in `products.json` and putting the file in `src/assets/img/photos/`.

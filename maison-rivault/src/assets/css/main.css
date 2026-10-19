@@ -264,3 +264,13 @@ th { font-weight: 400; font-size: 0.75rem; letter-spacing: 0.14em; text-transfor
 .waitlist p, .waitlist label { margin-left: auto; margin-right: auto; text-align: center; }
 .waitlist .label { display: block; margin-bottom: 2.25rem; }
 .waitlist-form .signup label { text-align: left; margin: 0 0 0.35rem; }
+
+/* Bundle offer on product pages */
+.bundle-offer { margin: 1.75rem 0 0.5rem; }
+.bundle-offer .label { margin-bottom: 0.5rem; }
+.offer { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; padding: 0.9rem 0; border-top: 1px solid var(--hairline); text-decoration: none; transition: opacity var(--fade) ease; }
+.offer:last-child { border-bottom: 1px solid var(--hairline); }
+.offer:hover { color: var(--ink); opacity: 0.75; }
+.offer .card-name { display: block; font-size: 1.25rem; }
+.offer > span:last-child { text-align: right; white-space: nowrap; }
+.offer .saving { display: block; font-size: 0.85rem; }

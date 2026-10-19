@@ -69,12 +69,12 @@
   /* Bundle add */
   $$("[data-add-bundle]").forEach(function (btn) {
     btn.addEventListener("click", function () {
-      var wrap = btn.closest(".bundle"), sizes = {}, ok = true;
+      var wrap = btn.closest("[data-bundle]"), sizes = {}, ok = true;
       $$("select[data-item]", wrap).forEach(function (s) { if (!s.value) { ok = false; s.focus(); } sizes[s.getAttribute("data-item")] = s.value; });
       var msg = $(".bundle-msg", wrap);
       if (!ok) { msg.textContent = "Choose a size for each piece."; return; }
       addLine({ id: btn.getAttribute("data-add-bundle"), kind: "bundle", sizes: sizes });
-      msg.textContent = "Added to your cart.";
+      msg.textContent = "Added to your cart. "; var a = document.createElement("a"); a.href = btn.getAttribute("data-cart-url") || "cart.html"; a.textContent = "View cart"; msg.appendChild(a);
     });
   });
 
