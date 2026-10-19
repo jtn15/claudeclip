@@ -2,16 +2,14 @@ window.MR = {
  "config": {
   "brand": "Maison Rivault",
   "launch": {
-   "date": "2026-11-23",
-   "label": "November 23",
-   "timezone_offset": "-07:00",
-   "launch_price_window_end": null
+   "label": "mid-December",
+   "target_date": "2026-12-14",
+   "target_confirmed": false
   },
   "commerce": {
-   "force_open": false,
    "currency": "USD",
    "shopify_domain": "",
-   "storefront_note": "Cart and checkout are handled by Shopify. Until shopify_domain and each variant id are filled in, checkout stays disabled."
+   "storefront_note": "Cart and checkout are Shopify's. This prototype hands off to a Shopify cart link once shopify_domain and each variant id are filled in."
   },
   "email": {
    "provider": "",
@@ -26,10 +24,10 @@ window.MR = {
  },
  "products": [
   {
-   "id": "quarter-zip",
+   "id": "sig-quarter-zip",
    "kind": "product",
-   "name": "Midweight quarter-zip",
-   "price": 79,
+   "name": "Signature quarter-zip",
+   "price": null,
    "sizes": [
     "S",
     "M",
@@ -38,14 +36,14 @@ window.MR = {
     "XXL"
    ],
    "color_name": "Navy",
-   "slug": "midweight-quarter-zip",
+   "slug": "signature-quarter-zip",
    "shopify_variant_ids": {}
   },
   {
-   "id": "knit-polo",
+   "id": "sig-knit-polo",
    "kind": "product",
-   "name": "Long-sleeve knit polo",
-   "price": 64,
+   "name": "Signature knit polo",
+   "price": null,
    "sizes": [
     "S",
     "M",
@@ -54,14 +52,14 @@ window.MR = {
     "XXL"
    ],
    "color_name": "Cream",
-   "slug": "long-sleeve-knit-polo",
+   "slug": "signature-knit-polo",
    "shopify_variant_ids": {}
   },
   {
-   "id": "crewneck",
+   "id": "sig-crewneck",
    "kind": "product",
-   "name": "Knit crewneck",
-   "price": 68,
+   "name": "Signature crewneck",
+   "price": null,
    "sizes": [
     "S",
     "M",
@@ -70,14 +68,38 @@ window.MR = {
     "XXL"
    ],
    "color_name": "Olive",
-   "slug": "knit-crewneck",
+   "slug": "signature-crewneck",
    "shopify_variant_ids": {}
   },
   {
-   "id": "overshirt",
+   "id": "sig-scarf",
    "kind": "product",
-   "name": "Overshirt",
-   "price": 98,
+   "name": "Signature scarf",
+   "price": null,
+   "sizes": [
+    "One size"
+   ],
+   "color_name": "Camel",
+   "slug": "signature-scarf",
+   "shopify_variant_ids": {}
+  },
+  {
+   "id": "sig-beanie",
+   "kind": "product",
+   "name": "Signature beanie",
+   "price": null,
+   "sizes": [
+    "One size"
+   ],
+   "color_name": "Navy",
+   "slug": "signature-beanie",
+   "shopify_variant_ids": {}
+  },
+  {
+   "id": "ess-quarter-zip",
+   "kind": "product",
+   "name": "Essentials quarter-zip",
+   "price": null,
    "sizes": [
     "S",
     "M",
@@ -86,31 +108,23 @@ window.MR = {
     "XXL"
    ],
    "color_name": "Camel",
-   "slug": "overshirt",
+   "slug": "essentials-quarter-zip",
    "shopify_variant_ids": {}
   },
   {
-   "id": "scarf",
+   "id": "ess-knit-polo",
    "kind": "product",
-   "name": "Scarf",
-   "price": 38,
+   "name": "Essentials knit polo",
+   "price": null,
    "sizes": [
-    "One size"
+    "S",
+    "M",
+    "L",
+    "XL",
+    "XXL"
    ],
-   "color_name": "Camel",
-   "slug": "scarf",
-   "shopify_variant_ids": {}
-  },
-  {
-   "id": "beanie",
-   "kind": "product",
-   "name": "Beanie",
-   "price": 28,
-   "sizes": [
-    "One size"
-   ],
-   "color_name": "Navy",
-   "slug": "beanie",
+   "color_name": "Olive",
+   "slug": "essentials-knit-polo",
    "shopify_variant_ids": {}
   }
  ],
@@ -119,10 +133,10 @@ window.MR = {
    "id": "layering",
    "kind": "bundle",
    "name": "The Layering Bundle",
-   "price": 129,
+   "price": null,
    "items": [
-    "quarter-zip",
-    "knit-polo"
+    "sig-quarter-zip",
+    "sig-knit-polo"
    ],
    "shopify_variant_ids": {}
   },
@@ -130,10 +144,10 @@ window.MR = {
    "id": "cold-morning",
    "kind": "bundle",
    "name": "The Cold Morning Set",
-   "price": 59,
+   "price": null,
    "items": [
-    "beanie",
-    "scarf"
+    "sig-beanie",
+    "sig-scarf"
    ],
    "shopify_variant_ids": {}
   },
@@ -141,10 +155,9 @@ window.MR = {
    "id": "weekend-layers",
    "kind": "bundle",
    "name": "The Weekend Layers",
-   "price": 149,
+   "price": null,
    "items": [
-    "overshirt",
-    "crewneck"
+    "sig-crewneck"
    ],
    "shopify_variant_ids": {}
   },
@@ -152,14 +165,13 @@ window.MR = {
    "id": "full-rotation",
    "kind": "bundle",
    "name": "The Full Rotation",
-   "price": 339,
+   "price": null,
    "items": [
-    "quarter-zip",
-    "knit-polo",
-    "crewneck",
-    "overshirt",
-    "scarf",
-    "beanie"
+    "sig-quarter-zip",
+    "sig-knit-polo",
+    "sig-crewneck",
+    "sig-scarf",
+    "sig-beanie"
    ],
    "shopify_variant_ids": {}
   }

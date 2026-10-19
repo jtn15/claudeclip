@@ -10,18 +10,10 @@
 
   function $(s, r) { return (r || document).querySelector(s); }
   function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
-  function money(n) { return "$" + (n % 1 ? n.toFixed(2) : n); }
+  function money(n) { return n === null ? "Price at launch" : "$" + (n % 1 ? n.toFixed(2) : n); }
   function store(key, val) {
     try { if (val === undefined) { return JSON.parse(localStorage.getItem(key)); } localStorage.setItem(key, JSON.stringify(val)); } catch (e) { return null; }
   }
-
-  /* Launch state: the store opens on launch.date (Arizona time) unless commerce.force_open is set. */
-  var opensAt = Date.parse(cfg.launch.date + "T00:00:00" + cfg.launch.timezone_offset);
-  var isOpen = !!cfg.commerce.force_open || Date.now() >= opensAt;
-  $$("[data-when]").forEach(function (el) { el.hidden = (el.getAttribute("data-when") === "open") !== isOpen; });
-
-  /* The launch announcement is only true until the store opens */
-  if (isOpen) { $$(".announce").forEach(function (el) { el.hidden = true; }); }
 
   /* Mobile menu */
   var menuBtn = $(".menu-btn"), nav = $("#site-nav");
@@ -32,13 +24,17 @@
     });
   }
 
-  /* Shop filter */
-  var filterBtns = $$(".filters button");
-  filterBtns.forEach(function (btn) {
+  /* Shop filters: tier and type combine */
+  var filters = { tier: "all", type: "all" };
+  $$(".filters button").forEach(function (btn) {
     btn.addEventListener("click", function () {
-      filterBtns.forEach(function (b) { b.setAttribute("aria-pressed", b === btn); });
-      var type = btn.getAttribute("data-type");
-      $$(".grid .card").forEach(function (c) { c.hidden = type !== "all" && c.getAttribute("data-type") !== type; });
+      var group = btn.getAttribute("data-group");
+      filters[group] = btn.getAttribute("data-value");
+      $$('.filters button[data-group="' + group + '"]').forEach(function (b) { b.setAttribute("aria-pressed", b === btn); });
+      $$(".grid .card").forEach(function (c) {
+        c.hidden = (filters.tier !== "all" && c.getAttribute("data-tier") !== filters.tier) ||
+                   (filters.type !== "all" && c.getAttribute("data-type") !== filters.type);
+      });
     });
   });
 
@@ -97,7 +93,7 @@
 
   function checkoutUrl(cart) {
     var domain = cfg.commerce.shopify_domain;
-    if (!domain) { return { error: "Checkout opens with the store on " + cfg.launch.label + "." }; }
+    if (!domain) { return { error: "Checkout opens when the store does, " + cfg.launch.label + "." }; }
     var parts = [];
     for (var i = 0; i < cart.length; i++) {
       var l = cart[i], item = byId[l.id], key, vid;
@@ -165,7 +161,7 @@
       msg.textContent = "Sending...";
       req.then(function (r) {
         if (!r.ok) { throw new Error("status " + r.status); }
-        form.reset(); msg.textContent = "Thank you. We will email you when Drop 001 opens on " + cfg.launch.label + ".";
+        form.reset(); msg.textContent = "Thank you. We will email you when doors open, " + cfg.launch.label + ".";
       }).catch(function () { msg.textContent = "Something went wrong. Please try again."; });
     });
   });

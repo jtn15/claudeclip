@@ -1,5 +1,7 @@
 {
-  "_note": "Every empty value below renders as a visible [confirm: ...] marker on the site and is reported by tools/check_placeholders.py. Fill them in, then run: python3 build.py",
+  "_note": "Switches live here. Every empty value renders as a visible [confirm: ...] marker and is reported by tools/check_placeholders.py. After editing, run: py build.py",
+  "SITE_MODE": "waitlist",
+  "SHOW_PRICES": false,
   "brand": "Maison Rivault",
   "tagline": "Quiet layers for every season.",
   "tagline_alternates": ["Dress sharp. Look effortless.", "Understated by design."],
@@ -10,16 +12,14 @@
   "instagram_handle": "",
   "contact_email": "",
   "launch": {
-    "date": "2026-11-23",
-    "label": "November 23",
-    "timezone_offset": "-07:00",
-    "launch_price_window_end": null
+    "label": "mid-December",
+    "target_date": "2026-12-14",
+    "target_confirmed": false
   },
   "commerce": {
-    "force_open": false,
     "currency": "USD",
     "shopify_domain": "",
-    "storefront_note": "Cart and checkout are handled by Shopify. Until shopify_domain and each variant id are filled in, checkout stays disabled."
+    "storefront_note": "Cart and checkout are Shopify's. This prototype hands off to a Shopify cart link once shopify_domain and each variant id are filled in."
   },
   "email": {
     "provider": "",
@@ -32,9 +32,16 @@
     "meta_pixel_id": ""
   },
   "shipping": {
-    "estimate": "",
+    "made_to_order_delivery": "",
+    "in_stock_ship": "",
+    "preorder_ship": "",
+    "preorder_policy": "",
     "cost": "",
     "regions": ""
+  },
+  "holiday": {
+    "cutoff_date": "",
+    "cutoff_confirmed": false
   },
   "returns": {
     "window_days": "",

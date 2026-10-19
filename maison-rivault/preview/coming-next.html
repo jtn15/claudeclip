@@ -3,12 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Contact | Maison Rivault</title>
-<meta name="description" content="Get in touch about orders, sizing or returns.">
+<title>Coming next | Maison Rivault</title>
+<meta name="description" content="What Maison Rivault plans to add after the first line. Not for sale yet.">
+<meta name="robots" content="noindex">
 
 <meta property="og:site_name" content="Maison Rivault">
-<meta property="og:title" content="Contact | Maison Rivault">
-<meta property="og:description" content="Get in touch about orders, sizing or returns.">
+<meta property="og:title" content="Coming next | Maison Rivault">
+<meta property="og:description" content="What Maison Rivault plans to add after the first line. Not for sale yet.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="assets/img/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -26,11 +27,11 @@
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<div class="announce label"><p>Drop 001 opens November 23</p></div>
+<div class="announce label"><p>Preview build, not live. Doors open mid-December</p></div>
 <header class="site-header">
   <div class="wrap">
     <a class="logo" href="index.html" aria-label="Maison Rivault, home"><span class="logo-lockup" role="img" aria-label="Maison Rivault"></span></a>
-    <nav id="site-nav" class="nav label" aria-label="Main"><a href="shop.html">Shop</a><a href="bundles.html">Bundles</a><a href="our-story.html">Our Story</a><a href="contact.html" aria-current="page">Contact</a></nav>
+    <nav id="site-nav" class="nav label" aria-label="Main"><a href="shop.html">Shop</a><a href="bundles.html">Bundles</a><a href="our-story.html">Our Story</a><a href="contact.html">Contact</a></nav>
     <div class="header-right label">
       <a class="cart-link" href="cart.html">Cart (<span class="cart-count">0</span>)</a>
       <button class="menu-btn label" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
@@ -39,10 +40,18 @@
 </header>
 <main id="main">
 
-<section class="page-head"><div class="col"><h1>Contact</h1></div></section>
+<section class="page-head"><div class="col"><h1>Coming next</h1></div></section>
 <section style="padding-top:1rem"><div class="col prose">
-  <p>Questions about an order, sizing or a return: write to <span class="todo">[confirm: contact email]</span>.</p>
-  <p class="muted">Please include your order number if you have one.</p>
+  <p class="lede">After the first line, we plan to add:</p>
+  <ul><li>Cardigan</li><li>Trousers</li><li>Footwear</li></ul>
+  <p>None of this is for sale yet. Leave your email and we will tell you when it is.</p>
+  <form class="signup js-signup" data-source="coming-next" novalidate>
+  <label class="label" style="flex-basis:100%" for="email-coming-next">Email address</label>
+  <input id="email-coming-next" type="email" name="email" autocomplete="email" placeholder="you@example.com" required>
+  <button class="btn" type="submit">Tell me</button>
+</form>
+<p class="form-msg" role="status" aria-live="polite"></p>
+<p class="small">We email once when doors open, and about what comes next. Unsubscribe any time.</p>
 </div></section>
 </main>
 <footer class="site-footer">
@@ -53,9 +62,9 @@
         <p class="muted" style="margin-top:1.25rem">Quiet layers for every season.</p>
       </div>
       <div class="footer-col"><h2>Shop</h2><ul>
-        <li><a href="shop.html">All of Drop 001</a></li>
+        <li><a href="shop.html">All products</a></li>
         <li><a href="bundles.html">Bundles</a></li>
-        <li><a href="index.html#waitlist">Waitlist</a></li></ul></div>
+        <li><a href="coming-next.html">Coming next</a></li></ul></div>
       <div class="footer-col"><h2>Help</h2><ul>
         <li><a href="size-guide.html">Size guide</a></li>
         <li><a href="shipping-returns.html">Shipping and returns</a></li>
@@ -70,7 +79,7 @@
         <li><a href="#" data-cookie-settings>Cookie settings</a></li></ul></div>
     </div>
     <div class="footer-base">
-      <p>&copy; 2026 Maison Rivault. Returns: <span class="todo">[confirm: return window]</span>. <a href="shipping-returns.html">Details</a></p>
+      <p>&copy; 2026 Maison Rivault. Returns: <span class="todo">[confirm: return window]</span>. <a href="shipping-returns.html">Return policy</a></p>
       <p>Est. 2026</p>
     </div>
   </div>

@@ -1,188 +1,153 @@
 {
-  "_note": "Prices are placeholders until supplier quotes arrive. Change a price here, keep price_status as 'placeholder' until it is final, then set it to 'final'. Colors are one per style; the assignment below is a placeholder. Fiber content, care and fit are required before launch (fiber content and care labelling are legal requirements for US garments; have a lawyer confirm wording).",
+  "_note": "Single source of truth for products, tiers, bundles and availability. There are no confirmed prices: every price is null with price_status 'tbd'. Set a number here (and SHOW_PRICES in site.config.json) once supplier quotes are final. Fiber content, fit and care are required before launch (fiber content and care labelling are legal requirements for US garments; have a lawyer confirm the wording). Do not claim 'handmade', 'limited edition' or a named yarn or origin unless the supplier has confirmed it in writing.",
   "colors": {
     "navy": { "name": "Navy", "hex": "#1F2A44" },
     "camel": { "name": "Camel", "hex": "#B58B5A" },
     "olive": { "name": "Olive", "hex": "#5E6038" },
     "cream": { "name": "Cream", "hex": "#E8DFCB" }
   },
+  "tiers": [
+    { "id": "signature", "name": "Signature", "name_status": "provisional", "blurb": "The core line, made to order." },
+    { "id": "essentials", "name": "Essentials", "name_status": "provisional", "blurb": "Everyday basics." }
+  ],
+  "availability_modes": {
+    "made_to_order": "Made to order",
+    "in_stock": "In stock",
+    "preorder": "Preorder"
+  },
   "products": [
     {
-      "id": "quarter-zip",
-      "slug": "midweight-quarter-zip",
-      "name": "Midweight quarter-zip",
-      "type": "Tops",
-      "color": "navy",
-      "color_status": "placeholder",
-      "price": 79,
-      "price_status": "placeholder",
+      "id": "sig-quarter-zip", "slug": "signature-quarter-zip", "name": "Quarter-zip", "tier": "signature", "type": "Tops",
+      "color": "navy", "color_status": "placeholder",
+      "price": null, "price_status": "tbd",
       "sizes": ["S", "M", "L", "XL", "XXL"],
-      "availability": "launch",
-      "summary": "The core piece of Drop 001. A midweight knit with a short zip at the collar, made to sit under an overshirt or on its own.",
+      "availability": "made_to_order", "availability_status": "tbc",
+      "summary": "A knit quarter-zip with a short zip at the collar. The core piece of the line.",
       "images": [
-        { "src": null, "alt": "Midweight quarter-zip in navy, front", "caption": "Product photo: quarter-zip, front" },
-        { "src": null, "alt": "Midweight quarter-zip in navy, back", "caption": "Product photo: quarter-zip, back" },
+        { "src": null, "alt": "Signature quarter-zip in navy, front", "caption": "Product photo: quarter-zip, front" },
+        { "src": null, "alt": "Signature quarter-zip in navy, back", "caption": "Product photo: quarter-zip, back" },
         { "src": null, "alt": "Close-up of the quarter-zip collar and zipper", "caption": "Product photo: quarter-zip, collar and zipper" },
         { "src": null, "alt": "Close-up of the knit texture", "caption": "Product photo: quarter-zip, knit texture" }
       ],
-      "fiber": null,
-      "fit": null,
-      "care": null,
-      "shopify_variant_ids": {}
+      "fiber": null, "fit": null, "care": null, "shopify_variant_ids": {}
     },
     {
-      "id": "knit-polo",
-      "slug": "long-sleeve-knit-polo",
-      "name": "Long-sleeve knit polo",
-      "type": "Tops",
-      "color": "cream",
-      "color_status": "placeholder",
-      "price": 64,
-      "price_status": "placeholder",
+      "id": "sig-knit-polo", "slug": "signature-knit-polo", "name": "Knit polo", "tier": "signature", "type": "Tops",
+      "color": "cream", "color_status": "placeholder",
+      "price": null, "price_status": "tbd",
       "sizes": ["S", "M", "L", "XL", "XXL"],
-      "availability": "launch",
-      "summary": "A long-sleeve polo in a fine knit. Wears alone in mild weather and layers under the quarter-zip or overshirt in cold.",
+      "availability": "made_to_order", "availability_status": "tbc",
+      "summary": "A long-sleeve polo in a fine knit. Wears alone in mild weather and layers under the quarter-zip in cold.",
       "images": [
-        { "src": null, "alt": "Long-sleeve knit polo in cream, front", "caption": "Product photo: knit polo, front" },
-        { "src": null, "alt": "Long-sleeve knit polo in cream, back", "caption": "Product photo: knit polo, back" },
+        { "src": null, "alt": "Signature knit polo in cream, front", "caption": "Product photo: knit polo, front" },
+        { "src": null, "alt": "Signature knit polo in cream, back", "caption": "Product photo: knit polo, back" },
         { "src": null, "alt": "Close-up of the polo collar and placket", "caption": "Product photo: knit polo, collar and placket" },
         { "src": null, "alt": "Close-up of the knit texture", "caption": "Product photo: knit polo, knit texture" }
       ],
-      "fiber": null,
-      "fit": null,
-      "care": null,
-      "shopify_variant_ids": {}
+      "fiber": null, "fit": null, "care": null, "shopify_variant_ids": {}
     },
     {
-      "id": "crewneck",
-      "slug": "knit-crewneck",
-      "name": "Knit crewneck",
-      "type": "Tops",
-      "color": "olive",
-      "color_status": "placeholder",
-      "price": 68,
-      "price_status": "placeholder",
+      "id": "sig-crewneck", "slug": "signature-crewneck", "name": "Crewneck", "tier": "signature", "type": "Tops",
+      "name_status": "crewneck or mock neck is still undecided",
+      "color": "olive", "color_status": "placeholder",
+      "price": null, "price_status": "tbd",
       "sizes": ["S", "M", "L", "XL", "XXL"],
-      "availability": "launch",
-      "name_status": "crewneck or mock-neck is still undecided",
-      "summary": "A plain knit crewneck. The simplest piece in the drop and the one that pairs with everything else.",
+      "availability": "made_to_order", "availability_status": "tbc",
+      "summary": "A plain knit crewneck. The simplest piece in the line and the one that pairs with the rest.",
       "images": [
-        { "src": null, "alt": "Knit crewneck in olive, front", "caption": "Product photo: crewneck, front" },
-        { "src": null, "alt": "Knit crewneck in olive, back", "caption": "Product photo: crewneck, back" },
+        { "src": null, "alt": "Signature crewneck in olive, front", "caption": "Product photo: crewneck, front" },
+        { "src": null, "alt": "Signature crewneck in olive, back", "caption": "Product photo: crewneck, back" },
         { "src": null, "alt": "Close-up of the crewneck neckline and rib", "caption": "Product photo: crewneck, neckline" },
         { "src": null, "alt": "Close-up of the knit texture", "caption": "Product photo: crewneck, knit texture" }
       ],
-      "fiber": null,
-      "fit": null,
-      "care": null,
-      "shopify_variant_ids": {}
+      "fiber": null, "fit": null, "care": null, "shopify_variant_ids": {}
     },
     {
-      "id": "overshirt",
-      "slug": "overshirt",
-      "name": "Overshirt",
-      "type": "Outerwear",
-      "color": "camel",
-      "color_status": "placeholder",
-      "price": 98,
-      "price_status": "placeholder",
-      "sizes": ["S", "M", "L", "XL", "XXL"],
-      "availability": "tbc",
-      "availability_note": "The overshirt may arrive after the rest of Drop 001.",
-      "summary": "A shirt-jacket cut to sit over the knits. The outer layer of the drop.",
-      "images": [
-        { "src": null, "alt": "Overshirt in camel, front", "caption": "Product photo: overshirt, front" },
-        { "src": null, "alt": "Overshirt in camel, back", "caption": "Product photo: overshirt, back" },
-        { "src": null, "alt": "Close-up of the overshirt collar and buttons", "caption": "Product photo: overshirt, collar and buttons" },
-        { "src": null, "alt": "Close-up of the fabric texture", "caption": "Product photo: overshirt, fabric texture" }
-      ],
-      "fiber": null,
-      "fit": null,
-      "care": null,
-      "shopify_variant_ids": {}
-    },
-    {
-      "id": "scarf",
-      "slug": "scarf",
-      "name": "Scarf",
-      "type": "Accessories",
-      "color": "camel",
-      "color_status": "placeholder",
-      "price": 38,
-      "price_status": "placeholder",
+      "id": "sig-scarf", "slug": "signature-scarf", "name": "Scarf", "tier": "signature", "type": "Accessories",
+      "color": "camel", "color_status": "placeholder",
+      "price": null, "price_status": "tbd",
       "sizes": ["One size"],
-      "availability": "launch",
-      "summary": "A knit scarf in the same yarn family as the rest of the drop.",
+      "availability": "made_to_order", "availability_status": "tbc",
+      "summary": "A knit scarf in the same yarn family as the rest of the line.",
       "images": [
-        { "src": null, "alt": "Scarf in camel, laid flat", "caption": "Product photo: scarf, flat" },
-        { "src": null, "alt": "Scarf in camel, worn", "caption": "Product photo: scarf, worn" },
+        { "src": null, "alt": "Signature scarf in camel, laid flat", "caption": "Product photo: scarf, flat" },
+        { "src": null, "alt": "Signature scarf in camel, worn", "caption": "Product photo: scarf, worn" },
         { "src": null, "alt": "Close-up of the scarf knit and edge", "caption": "Product photo: scarf, knit texture" }
       ],
-      "fiber": null,
-      "fit": null,
-      "care": null,
-      "shopify_variant_ids": {}
+      "fiber": null, "fit": null, "care": null, "shopify_variant_ids": {}
     },
     {
-      "id": "beanie",
-      "slug": "beanie",
-      "name": "Beanie",
-      "type": "Accessories",
-      "color": "navy",
-      "color_status": "placeholder",
-      "price": 28,
-      "price_status": "placeholder",
+      "id": "sig-beanie", "slug": "signature-beanie", "name": "Beanie", "tier": "signature", "type": "Accessories",
+      "color": "navy", "color_status": "placeholder",
+      "price": null, "price_status": "tbd",
       "sizes": ["One size"],
-      "availability": "launch",
+      "availability": "made_to_order", "availability_status": "tbc",
       "summary": "A plain knit beanie. Pairs with the scarf in The Cold Morning Set.",
       "images": [
-        { "src": null, "alt": "Beanie in navy, front", "caption": "Product photo: beanie, front" },
-        { "src": null, "alt": "Beanie in navy, worn", "caption": "Product photo: beanie, worn" },
+        { "src": null, "alt": "Signature beanie in navy, front", "caption": "Product photo: beanie, front" },
+        { "src": null, "alt": "Signature beanie in navy, worn", "caption": "Product photo: beanie, worn" },
         { "src": null, "alt": "Close-up of the beanie knit and cuff", "caption": "Product photo: beanie, knit texture" }
       ],
-      "fiber": null,
-      "fit": null,
-      "care": null,
-      "shopify_variant_ids": {}
+      "fiber": null, "fit": null, "care": null, "shopify_variant_ids": {}
+    },
+    {
+      "id": "ess-quarter-zip", "slug": "essentials-quarter-zip", "name": "Quarter-zip", "tier": "essentials", "type": "Tops",
+      "launch_status": "likely, unconfirmed",
+      "color": "camel", "color_status": "placeholder",
+      "price": null, "price_status": "tbd",
+      "sizes": ["S", "M", "L", "XL", "XXL"],
+      "availability": "preorder", "availability_status": "tbc",
+      "summary": "A knit quarter-zip basic with a short zip at the collar.",
+      "images": [
+        { "src": null, "alt": "Essentials quarter-zip in camel, front", "caption": "Product photo: Essentials quarter-zip, front" },
+        { "src": null, "alt": "Essentials quarter-zip in camel, back", "caption": "Product photo: Essentials quarter-zip, back" },
+        { "src": null, "alt": "Close-up of the quarter-zip collar and zipper", "caption": "Product photo: Essentials quarter-zip, collar and zipper" },
+        { "src": null, "alt": "Close-up of the knit texture", "caption": "Product photo: Essentials quarter-zip, knit texture" }
+      ],
+      "fiber": null, "fit": null, "care": null, "shopify_variant_ids": {}
+    },
+    {
+      "id": "ess-knit-polo", "slug": "essentials-knit-polo", "name": "Knit polo", "tier": "essentials", "type": "Tops",
+      "launch_status": "likely, unconfirmed",
+      "color": "olive", "color_status": "placeholder",
+      "price": null, "price_status": "tbd",
+      "sizes": ["S", "M", "L", "XL", "XXL"],
+      "availability": "preorder", "availability_status": "tbc",
+      "summary": "A long-sleeve knit polo basic.",
+      "images": [
+        { "src": null, "alt": "Essentials knit polo in olive, front", "caption": "Product photo: Essentials knit polo, front" },
+        { "src": null, "alt": "Essentials knit polo in olive, back", "caption": "Product photo: Essentials knit polo, back" },
+        { "src": null, "alt": "Close-up of the polo collar and placket", "caption": "Product photo: Essentials knit polo, collar and placket" },
+        { "src": null, "alt": "Close-up of the knit texture", "caption": "Product photo: Essentials knit polo, knit texture" }
+      ],
+      "fiber": null, "fit": null, "care": null, "shopify_variant_ids": {}
     }
   ],
   "bundles": [
     {
-      "id": "layering",
-      "slug": "the-layering-bundle",
-      "name": "The Layering Bundle",
-      "items": ["quarter-zip", "knit-polo"],
-      "price": 129,
-      "price_status": "placeholder",
-      "shopify_variant_ids": {}
+      "id": "layering", "slug": "the-layering-bundle", "name": "The Layering Bundle",
+      "items": ["sig-quarter-zip", "sig-knit-polo"], "open_slots": 0,
+      "contents_status": "tier assumed to be Signature",
+      "price": null, "price_status": "tbd", "shopify_variant_ids": {}
     },
     {
-      "id": "cold-morning",
-      "slug": "the-cold-morning-set",
-      "name": "The Cold Morning Set",
-      "items": ["beanie", "scarf"],
-      "price": 59,
-      "price_status": "placeholder",
-      "shopify_variant_ids": {}
+      "id": "cold-morning", "slug": "the-cold-morning-set", "name": "The Cold Morning Set",
+      "items": ["sig-beanie", "sig-scarf"], "open_slots": 0,
+      "contents_status": "tier assumed to be Signature",
+      "price": null, "price_status": "tbd", "shopify_variant_ids": {}
     },
     {
-      "id": "weekend-layers",
-      "slug": "the-weekend-layers",
-      "name": "The Weekend Layers",
-      "items": ["overshirt", "crewneck"],
-      "price": 149,
-      "price_status": "placeholder",
-      "shopify_variant_ids": {}
+      "id": "weekend-layers", "slug": "the-weekend-layers", "name": "The Weekend Layers",
+      "items": ["sig-crewneck"], "open_slots": 1,
+      "contents_status": "second piece not yet chosen",
+      "price": null, "price_status": "tbd", "shopify_variant_ids": {}
     },
     {
-      "id": "full-rotation",
-      "slug": "the-full-rotation",
-      "name": "The Full Rotation",
-      "items": ["quarter-zip", "knit-polo", "crewneck", "overshirt", "scarf", "beanie"],
-      "price": 339,
-      "price_status": "placeholder",
-      "shopify_variant_ids": {}
+      "id": "full-rotation", "slug": "the-full-rotation", "name": "The Full Rotation",
+      "items": ["sig-quarter-zip", "sig-knit-polo", "sig-crewneck", "sig-scarf", "sig-beanie"], "open_slots": 0,
+      "contents_status": "the whole Signature range",
+      "price": null, "price_status": "tbd", "shopify_variant_ids": {}
     }
   ],
-  "drop_two": ["Cardigan", "Trousers", "Loafers", "Boots"]
+  "coming_next": ["Cardigan", "Trousers", "Footwear"]
 }

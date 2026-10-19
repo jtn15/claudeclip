@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
-"""Build the Maison Rivault site into ./site from site.config.json and data/products.json.
+"""Build the Maison Rivault site from site.config.json and data/products.json.
 
-Standard library only. Run:  python3 build.py
-Preview:                     python3 -m http.server -d site 8000
+Standard library only.
+
+  python3 build.py              # writes ./site (per SITE_MODE) and ./preview (always the full store)
+  python3 build.py --mode live  # force the full store into ./site as well
+
+Deploy ./site only. ./preview is the full store for reviewing the design before launch; it is marked
+noindex and says so in the announcement bar. Preview locally with:
+  python3 -m http.server -d site 8000
+  python3 -m http.server -d preview 8001
 """
+import argparse
 import html
 import json
 import shutil
@@ -11,14 +19,19 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent
 SRC = ROOT / "src"
-OUT = ROOT / "site"
 
 CFG = json.loads((ROOT / "site.config.json").read_text())
 DATA = json.loads((ROOT / "data" / "products.json").read_text())
 COLORS = DATA["colors"]
 PRODUCTS = DATA["products"]
 BUNDLES = DATA["bundles"]
+TIERS = {t["id"]: t for t in DATA["tiers"]}
+MODES = DATA["availability_modes"]
 BY_ID = {p["id"]: p for p in PRODUCTS}
+SHOW_PRICES = bool(CFG["SHOW_PRICES"])
+
+# Set per build in build_site(): which chrome and banner text to use.
+STATE = {"preview": False}
 
 
 # ---------- helpers ----------
@@ -28,7 +41,7 @@ def esc(s):
 
 
 def todo(label):
-    """Visible marker for anything the owner still has to confirm. Picked up by tools/check_placeholders.py."""
+    """Visible marker for anything the owner must confirm. Counted by tools/check_placeholders.py."""
     return f'<span class="todo">[confirm: {esc(label)}]</span>'
 
 
@@ -40,20 +53,23 @@ def money(n):
     return f"${n:,.0f}" if float(n).is_integer() else f"${n:,.2f}"
 
 
+def priced(item):
+    """True when a price may be shown and bought."""
+    return SHOW_PRICES and item["price"] is not None
+
+
+def price_html(item):
+    if priced(item):
+        return f'<span class="price">{money(item["price"])}</span>'
+    return '<span class="price-tbd">Price at launch</span>'
+
+
 def color_of(p):
     return COLORS[p["color"]]
 
 
-def bundle_separate(b):
-    return sum(BY_ID[i]["price"] for i in b["items"])
-
-
-def bundle_saving(b):
-    return bundle_separate(b) - b["price"]
-
-
-def bundle_pct(b):
-    return round(100 * bundle_saving(b) / bundle_separate(b))
+def tier_name(p):
+    return TIERS[p["tier"]]["name"]
 
 
 def ph(caption, ratio="4 / 5", alt=None):
@@ -64,9 +80,8 @@ def ph(caption, ratio="4 / 5", alt=None):
 def image(img, ratio="4 / 5", eager=False):
     """Real photo when "src" is set in products.json, neutral placeholder otherwise."""
     if img.get("src"):
-        load = "eager" if eager else "lazy"
         return (f'<img class="photo" src="{esc(img["src"])}" alt="{esc(img["alt"])}" '
-                f'loading="{load}" style="aspect-ratio:{ratio}">')
+                f'loading="{"eager" if eager else "lazy"}" style="aspect-ratio:{ratio}">')
     return ph(img["caption"], ratio, img["alt"])
 
 
@@ -75,26 +90,42 @@ def instagram_url():
     return f"https://www.instagram.com/{h}/" if h else None
 
 
+def availability_html(p):
+    """Honest availability and ship window. Windows come from config; empty ones show as confirm markers."""
+    s = CFG["shipping"]
+    mode = p["availability"]
+    if mode == "made_to_order":
+        line = f'Made to order. Estimated delivery: {val(s["made_to_order_delivery"], "made-to-order delivery window")}.'
+    elif mode == "in_stock":
+        line = f'In stock. Ships {val(s["in_stock_ship"], "in-stock ship time")}.'
+    else:
+        line = (f'Preorder. Expected to ship {val(s["preorder_ship"], "preorder ship window")}. '
+                f'{val(s["preorder_policy"], "preorder charge policy, stated plainly")}')
+    status = f' {todo("availability mode for this product")}' if p.get("availability_status") == "tbc" else ""
+    return f'<p class="status-line">{line}{status}</p>'
+
+
+def holiday_html():
+    h = CFG["holiday"]
+    if h["cutoff_date"] and h["cutoff_confirmed"]:
+        return (f'<p class="small">Holiday orders: orders placed by {esc(h["cutoff_date"])} are expected '
+                f'to arrive before December 25.</p>')
+    return (f'<p class="small">We cannot yet promise delivery before December 25. '
+            f'{todo("holiday cutoff date, then set cutoff_confirmed")}</p>')
+
+
 # ---------- layout ----------
 
 NAV = [("shop.html", "Shop"), ("bundles.html", "Bundles"), ("our-story.html", "Our Story"), ("contact.html", "Contact")]
 
 
-def layout(path, title, description, body, root="", og_type="website"):
+def head(path, title, description, root, noindex=False):
     domain = CFG.get("domain", "").strip()
     full_title = title if title.startswith(CFG["brand"]) else f"{title} | {CFG['brand']}"
     canonical = f'<link rel="canonical" href="https://{esc(domain)}/{path}">' if domain else ""
     og_img = f"https://{domain}/assets/img/og-image.png" if domain else f"{root}assets/img/og-image.png"
     og_url = f'<meta property="og:url" content="https://{esc(domain)}/{path}">' if domain else ""
-
-    nav = "".join(
-        f'<a href="{root}{href}"' + (' aria-current="page"' if href == path else "") + f">{label}</a>"
-        for href, label in NAV
-    )
-    ig = instagram_url()
-    ig_link = (f'<a href="{esc(ig)}" rel="noopener">Instagram</a>' if ig
-               else f'Instagram {todo("Instagram handle")}')
-
+    robots = '<meta name="robots" content="noindex">' if noindex else ""
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -102,11 +133,12 @@ def layout(path, title, description, body, root="", og_type="website"):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(full_title)}</title>
 <meta name="description" content="{esc(description)}">
+{robots}
 {canonical}
 <meta property="og:site_name" content="{esc(CFG['brand'])}">
 <meta property="og:title" content="{esc(full_title)}">
 <meta property="og:description" content="{esc(description)}">
-<meta property="og:type" content="{og_type}">
+<meta property="og:type" content="website">
 <meta property="og:image" content="{esc(og_img)}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -120,13 +152,34 @@ def layout(path, title, description, body, root="", og_type="website"):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Jost:wght@300;400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{root}assets/css/main.css">
-</head>
-<body>
-<a class="skip" href="#main">Skip to content</a>
-<div class="announce label"><p>Drop 001 opens {esc(CFG['launch']['label'])}</p></div>
+</head>"""
+
+
+def scripts(root):
+    return (f'<script src="{root}assets/js/data.js"></script>\n'
+            f'<script src="{root}assets/js/site.js"></script>\n</body>\n</html>\n')
+
+
+def layout(path, title, description, body, root="", chrome="full"):
+    """chrome: 'full' (store), 'simple' (logo-only header, minimal footer), 'bare' (no header)."""
+    noindex = STATE["preview"]
+    out = head(path, title, description, root, noindex) + "\n<body>\n"
+    out += '<a class="skip" href="#main">Skip to content</a>\n'
+    home = f"{root}index.html"
+    lockup = (f'<a class="logo" href="{home}" aria-label="{esc(CFG["brand"])}, home">'
+              f'<span class="logo-lockup" role="img" aria-label="{esc(CFG["brand"])}"></span></a>')
+
+    if chrome == "full":
+        banner = f'Doors open {esc(CFG["launch"]["label"])}'
+        if STATE["preview"]:
+            banner = "Preview build, not live. " + banner
+        nav = "".join(
+            f'<a href="{root}{href}"' + (' aria-current="page"' if href == path else "") + f">{label}</a>"
+            for href, label in NAV)
+        out += f"""<div class="announce label"><p>{banner}</p></div>
 <header class="site-header">
   <div class="wrap">
-    <a class="logo" href="{root}index.html" aria-label="{esc(CFG['brand'])}, home"><span class="logo-lockup" role="img" aria-label="{esc(CFG['brand'])}"></span></a>
+    {lockup}
     <nav id="site-nav" class="nav label" aria-label="Main">{nav}</nav>
     <div class="header-right label">
       <a class="cart-link" href="{root}cart.html">Cart (<span class="cart-count">0</span>)</a>
@@ -134,10 +187,20 @@ def layout(path, title, description, body, root="", og_type="website"):
     </div>
   </div>
 </header>
-<main id="main">
-{body}
-</main>
-<footer class="site-footer">
+"""
+    elif chrome == "simple":
+        out += f'<header class="site-header"><div class="wrap">{lockup}</div></header>\n'
+
+    out += f'<main id="main">\n{body}\n</main>\n'
+
+    cookie = '<a href="#" data-cookie-settings>Cookie settings</a>'
+    if chrome == "full":
+        ig = instagram_url()
+        ig_link = (f'<a href="{esc(ig)}" rel="noopener">Instagram</a>' if ig
+                   else f'Instagram {todo("Instagram handle")}')
+        ret = CFG["returns"]["window_days"]
+        ret_html = val(ret + " days" if ret else "", "return window")
+        out += f"""<footer class="site-footer">
   <div class="wrap">
     <div class="footer-grid">
       <div class="footer-brand">
@@ -145,9 +208,9 @@ def layout(path, title, description, body, root="", og_type="website"):
         <p class="muted" style="margin-top:1.25rem">{esc(CFG['tagline'])}</p>
       </div>
       <div class="footer-col"><h2>Shop</h2><ul>
-        <li><a href="{root}shop.html">All of Drop 001</a></li>
+        <li><a href="{root}shop.html">All products</a></li>
         <li><a href="{root}bundles.html">Bundles</a></li>
-        <li><a href="{root}index.html#waitlist">Waitlist</a></li></ul></div>
+        <li><a href="{root}coming-next.html">Coming next</a></li></ul></div>
       <div class="footer-col"><h2>Help</h2><ul>
         <li><a href="{root}size-guide.html">Size guide</a></li>
         <li><a href="{root}shipping-returns.html">Shipping and returns</a></li>
@@ -159,53 +222,71 @@ def layout(path, title, description, body, root="", og_type="website"):
       <div class="footer-col"><h2>Legal</h2><ul>
         <li><a href="{root}privacy.html">Privacy</a></li>
         <li><a href="{root}terms.html">Terms</a></li>
-        <li><a href="#" data-cookie-settings>Cookie settings</a></li></ul></div>
+        <li>{cookie}</li></ul></div>
     </div>
     <div class="footer-base">
-      <p>&copy; {esc(CFG['established'])} {esc(CFG['brand'])}. Returns: {val(CFG['returns']['window_days'] and CFG['returns']['window_days'] + ' days', 'return window')}. <a href="{root}shipping-returns.html">Details</a></p>
+      <p>&copy; {esc(CFG['established'])} {esc(CFG['brand'])}. Returns: {ret_html}. <a href="{root}shipping-returns.html">Return policy</a></p>
       <p>Est. {esc(CFG['established'])}</p>
     </div>
   </div>
 </footer>
-<script src="{root}assets/js/data.js"></script>
-<script src="{root}assets/js/site.js"></script>
-</body>
-</html>
 """
+    else:
+        out += f"""<footer class="site-footer site-footer-slim">
+  <div class="wrap footer-base" style="border:0;margin:0 auto;padding:0 var(--gutter);justify-content:center;gap:1.75rem">
+    <p>Est. {esc(CFG['established'])}</p>
+    <p><a href="{root}privacy.html">Privacy</a></p>
+    <p><a href="{root}terms.html">Terms</a></p>
+    <p>{cookie}</p>
+  </div>
+</footer>
+"""
+    return out + scripts(root)
 
 
 # ---------- components ----------
 
-def signup(source, button="Notify me", note=True):
-    em = ('<p class="small">One email when Drop 001 opens, and a note about Drop 002. '
-          'Unsubscribe any time.</p>') if note else ""
+def signup(source, button="Notify me"):
     return f"""<form class="signup js-signup" data-source="{esc(source)}" novalidate>
   <label class="label" style="flex-basis:100%" for="email-{esc(source)}">Email address</label>
   <input id="email-{esc(source)}" type="email" name="email" autocomplete="email" placeholder="you@example.com" required>
   <button class="btn" type="submit">{esc(button)}</button>
 </form>
 <p class="form-msg" role="status" aria-live="polite"></p>
-{em}"""
+<p class="small">We email once when doors open, and about what comes next. Unsubscribe any time.</p>"""
 
 
 def product_card(p, root=""):
     c = color_of(p)
-    return f"""<a class="card" href="{root}products/{p['slug']}.html" data-type="{esc(p['type'])}">
+    return f"""<a class="card" href="{root}products/{p['slug']}.html" data-tier="{esc(p['tier'])}" data-type="{esc(p['type'])}">
   {image(p['images'][0], '4 / 5')}
   <div class="card-meta">
     <div><div class="card-name">{esc(p['name'])}</div>
-    <div class="card-sub"><span class="swatch" style="background:{c['hex']}"></span>{esc(c['name'])}</div></div>
-    <div class="price">{money(p['price'])}</div>
+    <div class="card-sub"><span class="swatch" style="background:{c['hex']}"></span>{esc(tier_name(p))} &middot; {esc(c['name'])}</div></div>
+    {price_html(p)}
   </div></a>"""
 
 
+def bundle_contents(b):
+    rows = [f"<li>{esc(BY_ID[i]['name'])}, {esc(color_of(BY_ID[i])['name'])}</li>" for i in b["items"]]
+    rows += [f"<li>One more piece {todo('second piece for ' + b['name'])}</li>"] * b["open_slots"]
+    return "".join(rows)
+
+
+def bundle_saving_html(b):
+    """A saving is shown only when the bundle and every component have final prices."""
+    parts = [BY_ID[i] for i in b["items"]]
+    if b["open_slots"] or not priced(b) or not all(priced(p) for p in parts):
+        return '<p class="small">The saving is shown once prices are set.</p>'
+    separate = sum(p["price"] for p in parts)
+    saved = separate - b["price"]
+    if saved <= 0:
+        return ""
+    return (f'<p class="saving">Save {money(saved)} ({round(100 * saved / separate)}%) against buying '
+            f'separately at {money(separate)}.</p>')
+
+
 def bundle_block(b, full=False, root=""):
-    items = "".join(f"<li>{esc(BY_ID[i]['name'])}, {esc(color_of(BY_ID[i])['name'])}</li>" for i in b["items"])
-    tbc = any(BY_ID[i]["availability"] == "tbc" for i in b["items"])
-    note = (f'<p class="small">Includes the overshirt, which may arrive after the rest of Drop 001. {todo("overshirt release date")}</p>'
-            if tbc else "")
-    saving = (f'<p class="saving">Save {money(bundle_saving(b))} ({bundle_pct(b)}%) against buying separately at '
-              f'{money(bundle_separate(b))}.</p>')
     if not full:
         cta = f'<a class="btn btn-quiet" href="{root}bundles.html#{b["slug"]}">View bundle</a>'
     else:
@@ -217,95 +298,129 @@ def bundle_block(b, full=False, root=""):
             opts = "".join(f'<option value="{s}">{s}</option>' for s in p["sizes"])
             selects += (f'<label><span class="label">{esc(p["name"])} size</span>'
                         f'<select data-item="{p["id"]}"><option value="">Choose size</option>{opts}</select></label>')
-        cta = f"""<div data-when="closed"><a class="btn" href="{root}index.html#waitlist">Join the waitlist</a></div>
-<div data-when="open" hidden>
-  <div class="bundle-sizes">{selects}</div>
-  <button class="btn" type="button" data-add-bundle="{b['id']}">Add bundle to cart</button>
-  <p class="form-msg small bundle-msg" role="status" aria-live="polite"></p>
-</div>"""
+        can_buy = priced(b) and not b["open_slots"]
+        disabled = "" if can_buy else " disabled"
+        why = "" if can_buy else '<p class="small">Available once the price is set.</p>'
+        cta = f"""<div class="bundle-sizes">{selects}</div>
+<button class="btn" type="button" data-add-bundle="{b['id']}"{disabled}>Add bundle to cart</button>
+{why}<p class="form-msg small bundle-msg" role="status" aria-live="polite"></p>"""
+    status = f'<p class="small">{todo(b["contents_status"]) }</p>' if b["contents_status"] not in ("the whole Signature range",) else ""
     return f"""<article class="bundle" id="{b['slug']}">
   <h3>{esc(b['name'])}</h3>
-  <p class="price">{money(b['price'])}</p>
-  <ul>{items}</ul>
-  {saving}
-  {note if full else ''}
+  <p>{price_html(b)}</p>
+  <ul>{bundle_contents(b)}</ul>
+  {bundle_saving_html(b)}
+  {status if full else ''}
   {cta}
 </article>"""
 
 
-# ---------- pages ----------
+def tier_section(tier_id, root=""):
+    t = TIERS[tier_id]
+    items = [p for p in PRODUCTS if p["tier"] == tier_id]
+    cards = "".join(product_card(p, root) for p in items)
+    extra = f' {todo("Essentials launch styles")}' if tier_id == "essentials" else ""
+    flag = f' {todo("tier name")}' if t["name_status"] == "provisional" else ""
+    return f"""<section id="{tier_id}">
+  <div class="wrap">
+    <div class="section-head"><h2>{esc(t['name'])}{flag}</h2><a class="label" href="shop.html">View all</a></div>
+    <p class="muted" style="margin-bottom:2rem">{esc(t['blurb'])}{extra}</p>
+    <div class="grid">{cards}</div>
+  </div>
+</section>"""
+
+
+# ---------- pages: each returns dict(path, title, desc, body, chrome) ----------
+
+def page(path, title, desc, body, chrome="full"):
+    return {"path": path, "title": title, "desc": desc, "body": body, "chrome": chrome}
+
+
+def page_waitlist(path="index.html"):
+    body = f"""
+<div class="waitlist">
+  <div class="waitlist-inner">
+    <span class="logo logo-hero" role="img" aria-label="{esc(CFG['brand'])}"></span>
+    <h1>{esc(CFG['tagline'])}</h1>
+    <p class="label muted">Doors open {esc(CFG['launch']['label'])}.</p>
+    <div class="waitlist-form">{signup('waitlist', 'Join the waitlist')}</div>
+  </div>
+</div>"""
+    return page(path, f"{CFG['brand']}: {CFG['tagline']}",
+                f"Quiet, well-made knitwear for men. Doors open {CFG['launch']['label']}. Join the waitlist.",
+                body, chrome="bare")
+
 
 def page_home():
-    cards = "".join(product_card(p) for p in PRODUCTS)
     bundles = "".join(bundle_block(b) for b in BUNDLES)
-    drop2 = ", ".join(DATA["drop_two"][:-1]).lower() + " and " + DATA["drop_two"][-1].lower()
+    loc = esc(CFG["location"]) if CFG["location"] else todo("location, e.g. Phoenix, Arizona")
     body = f"""
 <section class="hero">
   <div class="wrap">
     <div class="hero-copy">
-      <p class="label muted">Drop 001</p>
+      <p class="label muted">Menswear in layers</p>
       <h1>{esc(CFG['tagline'])}</h1>
-      <p class="lede">Knitwear for men, built in layers. Six styles, four colors, opening {esc(CFG['launch']['label'])}.</p>
-      <div data-when="closed"><a class="btn" href="#waitlist">Join the waitlist</a></div>
-      <div data-when="open" hidden><a class="btn" href="shop.html">Shop Drop 001</a></div>
+      <p class="lede">Knitwear for men, built in layers, in navy, camel, olive and cream. Doors open {esc(CFG['launch']['label'])}.</p>
+      <a class="btn" href="shop.html">Shop the line</a>
     </div>
     <div class="hero-art">{ph('Hero photo: quarter-zip and polo, window light', '4 / 5')}</div>
   </div>
 </section>
 <hr class="rule">
-<section>
-  <div class="wrap">
-    <div class="section-head"><h2>Drop 001</h2><a class="label" href="shop.html">View all</a></div>
-    <div class="grid">{cards}</div>
-  </div>
-</section>
+{tier_section('signature')}
+<hr class="rule">
+{tier_section('essentials')}
 <hr class="rule">
 <section>
   <div class="wrap">
     <div class="section-head"><h2>Bundles</h2><a class="label" href="bundles.html">View all</a></div>
-    <p class="muted" style="margin-bottom:2rem">Four sets, each priced about ten percent under the separate price.</p>
     <div class="bundles">{bundles}</div>
   </div>
 </section>
 <section class="story-block">
   <div class="col center">
     <p class="statement">{esc(CFG['story_sentence'])}</p>
-    <p class="label muted">Est. {esc(CFG['established'])}{' &middot; ' + esc(CFG['location']) if CFG['location'] else ' &middot; ' + todo('location, e.g. Phoenix, Arizona')}</p>
+    <p class="label muted">Est. {esc(CFG['established'])} &middot; {loc}</p>
     <p style="margin-top:1.5rem"><a class="label" href="our-story.html">Our story</a></p>
   </div>
 </section>
 <section id="waitlist">
   <div class="col">
-    <h2>Drop 001 opens {esc(CFG['launch']['label'])}.</h2>
-    <p class="muted">Leave your email and we will write once when it opens. Drop 002 follows: {esc(drop2)}. It is not for sale yet.</p>
+    <h2>Doors open {esc(CFG['launch']['label'])}.</h2>
+    <p class="muted">Leave your email and we will write once when they do.</p>
     {signup('home')}
   </div>
 </section>"""
-    return ("index.html", f"{CFG['brand']}: {CFG['tagline']}",
-            "Quiet, well-made men's knitwear in layers. Drop 001 is six styles in navy, camel, olive and cream, opening "
-            + CFG["launch"]["label"] + ".", body)
+    return page("index.html", f"{CFG['brand']}: {CFG['tagline']}",
+                f"Quiet, well-made men's knitwear in two tiers, Signature and Essentials. Doors open {CFG['launch']['label']}.", body)
+
+
+def filter_group(label, group, values):
+    btns = '<button type="button" data-group="%s" data-value="all" aria-pressed="true">All</button>' % group
+    btns += "".join(f'<button type="button" data-group="{group}" data-value="{esc(v)}" aria-pressed="false">{esc(n)}</button>'
+                    for v, n in values)
+    return f'<div class="filters" role="group" aria-label="{esc(label)}">{btns}</div>'
 
 
 def page_shop():
+    tiers = [(t["id"], t["name"]) for t in DATA["tiers"]]
     types = []
     for p in PRODUCTS:
         if p["type"] not in types:
             types.append(p["type"])
-    filters = '<button type="button" data-type="all" aria-pressed="true">All</button>' + "".join(
-        f'<button type="button" data-type="{esc(t)}" aria-pressed="false">{esc(t)}</button>' for t in types)
     cards = "".join(product_card(p) for p in PRODUCTS)
     body = f"""
 <section class="page-head"><div class="wrap">
-  <h1>Drop 001</h1>
-  <p class="lede">Six knitwear styles, each in one color. Opens {esc(CFG['launch']['label'])}.</p>
+  <h1>Shop</h1>
+  <p class="lede">Two tiers, one color per style. Doors open {esc(CFG['launch']['label'])}.</p>
 </div></section>
 <section style="padding-top:1rem"><div class="wrap">
-  <div class="filters" role="group" aria-label="Filter by type">{filters}</div>
+  {filter_group('Filter by tier', 'tier', tiers)}
+  {filter_group('Filter by type', 'type', [(t, t) for t in types])}
   <div class="grid">{cards}</div>
   <p class="muted" style="margin-top:3rem">Buying more than one piece? See the <a href="bundles.html">bundles</a>.</p>
 </div></section>"""
-    return ("shop.html", "Shop Drop 001", "Six knitwear styles for men in navy, camel, olive and cream. Drop 001 opens "
-            + CFG["launch"]["label"] + ".", body)
+    return page("shop.html", "Shop", "Knitwear for men in two tiers, Signature and Essentials, in navy, camel, olive and cream.", body)
 
 
 def page_bundles():
@@ -313,10 +428,10 @@ def page_bundles():
     body = f"""
 <section class="page-head"><div class="wrap">
   <h1>Bundles</h1>
-  <p class="lede">Four sets, each about ten percent under the separate price. The saving is shown on each one.</p>
+  <p class="lede">Four sets. Each shows what is in it, and the saving once prices are set.</p>
 </div></section>
 <section style="padding-top:1rem"><div class="wrap"><div class="bundles">{blocks}</div></div></section>"""
-    return ("bundles.html", "Bundles", "Four Drop 001 bundles, each about ten percent under buying the pieces separately.", body)
+    return page("bundles.html", "Bundles", "Four bundles: The Layering Bundle, The Cold Morning Set, The Weekend Layers and The Full Rotation.", body)
 
 
 def page_product(p):
@@ -329,57 +444,73 @@ def page_product(p):
                f'<div class="size-row"><label class="label" for="size">Size</label><a class="small" href="../size-guide.html">Size guide</a></div>'
                f'<select id="size"><option value="">Choose a size</option>{opts}</select>'
                f'<p class="form-msg small" id="size-msg" role="status" aria-live="polite"></p>')
-    avail = ""
-    if p["availability"] == "tbc":
-        avail = f'<p class="status-line">{esc(p["availability_note"])} {todo("release date")}</p>'
-    ship = val(CFG["shipping"]["estimate"], "shipping estimate")
+    buyable = priced(p)
+    cta = (f'<button class="btn btn-block" type="button" data-add-product="{p["id"]}" data-cart-url="../cart.html">Add to cart</button>'
+           if buyable else
+           '<button class="btn btn-block" type="button" disabled>Add to cart</button>'
+           '<p class="small" style="margin-top:0.75rem">Available once the price is set.</p>')
+    ret = CFG["returns"]
+    ret_line = val(ret["window_days"] + " days" if ret["window_days"] else "", "return window")
+    name_flag = f' {todo(p["name_status"])}' if p.get("name_status") else ""
+    launch_flag = f' {todo("whether this launches: " + p["launch_status"])}' if p.get("launch_status") else ""
     body = f"""
 <section style="padding-top:2.5rem"><div class="wrap">
   <p class="crumbs label"><a href="../shop.html">Shop</a> / {esc(p['name'])}</p>
   <div class="product">
     <div class="product-gallery">{gallery}</div>
     <div class="product-info">
-      <h1>{esc(p['name'])}</h1>
-      <p class="price">{money(p['price'])}</p>
+      <p class="label muted">{esc(tier_name(p))}</p>
+      <h1>{esc(p['name'])}{name_flag}</h1>
+      <p>{price_html(p)}</p>
       <p class="card-sub"><span class="swatch" style="background:{c['hex']}"></span>{esc(c['name'])}</p>
-      <p>{esc(p['summary'])}</p>
-      {avail}
+      <p>{esc(p['summary'])}{launch_flag}</p>
+      {availability_html(p)}
       {size_ui}
-      <div style="margin-top:1.25rem">
-        <div data-when="closed"><a class="btn btn-block" href="../index.html#waitlist">Join the waitlist</a>
-          <p class="small" style="margin-top:0.75rem">Drop 001 opens {esc(CFG['launch']['label'])}.</p></div>
-        <div data-when="open" hidden><button class="btn btn-block" type="button" data-add-product="{p['id']}" data-cart-url="../cart.html">Add to cart</button></div>
-      </div>
-      <p class="small" style="margin-top:1rem">Shipping: {ship}. Returns: see <a href="../shipping-returns.html">shipping and returns</a>.</p>
+      <div style="margin-top:1.25rem">{cta}</div>
+      {holiday_html()}
+      <p class="small">Returns: {ret_line}. See <a href="../shipping-returns.html">shipping and returns</a>.</p>
       <div style="margin-top:2rem">
         <details open><summary class="label">Fabric and fiber content</summary><div><p>{val(p['fiber'], 'fiber content, required by law for US garments')}</p></div></details>
         <details><summary class="label">Fit</summary><div><p>{val(p['fit'], 'fit note')}</p></div></details>
         <details><summary class="label">Care</summary><div><p>{val(p['care'], 'care instructions')}</p></div></details>
-        <details><summary class="label">Shipping and returns</summary><div><p>Ships {ship}.</p><p><a href="../shipping-returns.html">Full shipping and returns policy</a></p></div></details>
+        <details><summary class="label">Shipping and returns</summary><div><p><a href="../shipping-returns.html">Full shipping and returns policy</a></p></div></details>
       </div>
     </div>
   </div>
 </div></section>"""
-    return (f"products/{p['slug']}.html", f"{p['name']} in {c['name']}",
-            f"{p['name']} in {c['name'].lower()}, {money(p['price'])}. {p['summary']}", body)
+    return page(f"products/{p['slug']}.html", f"{tier_name(p)} {p['name'].lower()} in {c['name'].lower()}",
+                f"{tier_name(p)} {p['name'].lower()} in {c['name'].lower()}. {p['summary']}", body)
 
 
 def page_story():
+    loc = val(CFG["location"], "location, e.g. Phoenix, Arizona")
     body = f"""
 <section class="page-head"><div class="col"><h1>Our Story</h1></div></section>
 <section style="padding-top:1rem"><div class="col prose">
-  <p class="lede">{esc(CFG['story_sentence'])} Est. {esc(CFG['established'])}. {val(CFG['location'], 'location, e.g. Phoenix, Arizona')}</p>
+  <p class="lede">{esc(CFG['story_sentence'])} Est. {esc(CFG['established'])}. {loc}</p>
   <p>Maison Rivault begins with a narrow idea: a small set of knitwear, in four colors, that goes together without effort. Navy, camel, olive and cream. Pieces that sit over and under each other, so a cold morning and a mild afternoon call for the same few things.</p>
-  <p>Drop 001 is six styles: a quarter-zip, a knit polo, a crewneck, an overshirt, a scarf and a beanie. Each comes in one color, chosen to work with the rest. There are no seasonal reinventions and no long catalog to sort through.</p>
-  <p>We are a new brand, and we would rather say so than borrow a history. What we can offer is a short list of well-chosen pieces, described plainly, with fabric, fit and care stated on every page. Drop 002, with a cardigan, trousers and footwear, comes next.</p>
+  <p>The line has two tiers, Signature and Essentials. Each style comes in one color at launch, and each product page says plainly how the piece is made available and when to expect it.</p>
+  <p>We are a new brand, and we would rather say so than borrow a history. What we can offer is a short list of well-chosen pieces, described plainly, with fabric, fit and care stated on every page.</p>
 </div></section>
 <section class="story-block"><div class="col">
   <h2 style="text-align:center">Join the waitlist</h2>
-  <p class="muted" style="text-align:center;margin-left:auto;margin-right:auto">Drop 001 opens {esc(CFG['launch']['label'])}.</p>
+  <p class="muted" style="text-align:center;margin-left:auto;margin-right:auto">Doors open {esc(CFG['launch']['label'])}.</p>
   <div style="display:flex;flex-direction:column;align-items:center">{signup('story')}</div>
 </div></section>"""
-    return ("our-story.html", "Our Story", "Maison Rivault makes quiet, well-made knitwear for men, built in layers. A new brand, est. "
-            + CFG["established"] + ".", body)
+    return page("our-story.html", "Our Story", f"Maison Rivault makes quiet, well-made knitwear for men, built in layers. A new brand, est. {CFG['established']}.", body)
+
+
+def page_coming_next():
+    items = "".join(f"<li>{esc(i)}</li>" for i in DATA["coming_next"])
+    body = f"""
+<section class="page-head"><div class="col"><h1>Coming next</h1></div></section>
+<section style="padding-top:1rem"><div class="col prose">
+  <p class="lede">After the first line, we plan to add:</p>
+  <ul>{items}</ul>
+  <p>None of this is for sale yet. Leave your email and we will tell you when it is.</p>
+  {signup('coming-next', 'Tell me')}
+</div></section>"""
+    return page("coming-next.html", "Coming next", "What Maison Rivault plans to add after the first line. Not for sale yet.", body)
 
 
 def page_size():
@@ -396,7 +527,7 @@ def page_size():
   <p>Lay a favorite sweater flat. Measure across the chest, from underarm to underarm, and double it. Measure length from the high point of the shoulder to the hem.</p>
   <p>Scarf and beanie are one size. Questions about fit: <a href="contact.html">contact us</a>.</p>
 </div></section>"""
-    return ("size-guide.html", "Size guide", "Garment measurements and how to find your size.", body)
+    return page("size-guide.html", "Size guide", "Garment measurements and how to find your size.", body)
 
 
 def page_shipping():
@@ -404,35 +535,42 @@ def page_shipping():
     body = f"""
 <section class="page-head"><div class="col"><h1>Shipping and returns</h1></div></section>
 <section style="padding-top:1rem"><div class="col prose">
+  <h2>How products are made available</h2>
+  <p><strong>Made to order:</strong> made after you order. Estimated delivery: {val(s['made_to_order_delivery'], 'made-to-order delivery window')}.</p>
+  <p><strong>In stock:</strong> ships right away. Ships {val(s['in_stock_ship'], 'in-stock ship time')}.</p>
+  <p><strong>Preorder:</strong> not made yet. Expected to ship {val(s['preorder_ship'], 'preorder ship window')}. {val(s['preorder_policy'], 'preorder charge policy, stated plainly')}</p>
+  <p>Each product page says which of these applies.</p>
   <h2>Shipping</h2>
-  <p><strong>Estimate:</strong> {val(s['estimate'], 'shipping time range, and keep to it')}.</p>
   <p><strong>Cost:</strong> {val(s['cost'], 'shipping cost')}.</p>
   <p><strong>Where we ship:</strong> {val(s['regions'], 'shipping regions')}.</p>
-  <p>Drop 001 orders open on {esc(CFG['launch']['label'])}. The estimate above counts from the day an order is placed.</p>
+  <h2>Holiday orders</h2>
+  {holiday_html()}
   <h2>Returns</h2>
   <p><strong>Window:</strong> {val(r['window_days'] and r['window_days'] + ' days from delivery', 'return window')}.</p>
   <p><strong>Condition:</strong> {val(r['conditions'], 'return conditions, e.g. unworn with tags')}.</p>
   <p><strong>Return shipping:</strong> {val(r['return_shipping'], 'who pays return shipping')}.</p>
   <p>To start a return, <a href="contact.html">contact us</a> with your order number.</p>
 </div></section>"""
-    return ("shipping-returns.html", "Shipping and returns", "Shipping times and costs, and how returns work.", body)
+    return page("shipping-returns.html", "Shipping and returns", "How products are made available, shipping times and costs, and how returns work.", body)
 
 
 def page_faq():
     qa = [
-        ("When does Drop 001 open?", f"Drop 001 opens on {esc(CFG['launch']['label'])}. <a href=\"index.html#waitlist\">Join the waitlist</a> and we will email once when it does."),
-        ("What colors are available?", "Four colors across the drop: navy, camel, olive and cream. Each style comes in one color. Each product page names its color."),
-        ("What is in Drop 002?", "A cardigan, trousers and footwear (loafers and boots). They are announced only and are not for sale yet."),
+        ("When do doors open?", f"Doors open {esc(CFG['launch']['label'])}. <a href=\"index.html#waitlist\">Join the waitlist</a> and we will email once when they do."),
+        ("What are Signature and Essentials?", "Two tiers of the same line. Each product page says which tier it belongs to and how it is made available."),
+        ("What does made to order mean?", f"The piece is made after you order. Estimated delivery: {val(CFG['shipping']['made_to_order_delivery'], 'made-to-order delivery window')}."),
+        ("What is a preorder?", f"A preorder is not made yet. {val(CFG['shipping']['preorder_policy'], 'preorder charge policy, stated plainly')}"),
+        ("What colors are available?", "Four colors across the line: navy, camel, olive and cream. Each style comes in one color at launch."),
+        ("What comes next?", "A cardigan, trousers and footwear. They are not for sale yet. See <a href=\"coming-next.html\">Coming next</a>."),
         ("Will pieces be restocked?", f"{todo('restock plan')}"),
-        ("How do the bundles work?", "Each bundle is priced about ten percent under buying the pieces separately. The exact saving is shown on the <a href=\"bundles.html\">bundles page</a>."),
-        ("How do I find my size?", "See the <a href=\"size-guide.html\">size guide</a> for garment measurements."),
+        ("How do I find my size?", "See the <a href=\"size-guide.html\">size guide</a>."),
         ("What is your return policy?", "See <a href=\"shipping-returns.html\">shipping and returns</a>."),
     ]
     items = "".join(f"<details><summary>{q}</summary><div><p>{a}</p></div></details>" for q, a in qa)
     body = f"""
 <section class="page-head"><div class="col"><h1>FAQ</h1></div></section>
 <section style="padding-top:1rem"><div class="col">{items}</div></section>"""
-    return ("faq.html", "FAQ", "Answers about Drop 001, sizing, bundles, shipping and returns.", body)
+    return page("faq.html", "FAQ", "Answers about availability, sizing, bundles, shipping and returns.", body)
 
 
 def page_contact():
@@ -444,23 +582,23 @@ def page_contact():
   <p>Questions about an order, sizing or a return: write to {mail}.</p>
   <p class="muted">Please include your order number if you have one.</p>
 </div></section>"""
-    return ("contact.html", "Contact", "Get in touch about orders, sizing or returns.", body)
+    return page("contact.html", "Contact", "Get in touch about orders, sizing or returns.", body)
 
 
-def page_legal(kind):
+def page_legal(kind, chrome="full"):
     if kind == "privacy":
-        title, intro = "Privacy", "This is a plain-language draft. Have a lawyer review it before launch."
+        title = "Privacy"
         paras = f"""
   <h2>What we collect</h2>
   <p>If you join the waitlist, we collect your email address. When you place an order through our store, the checkout provider collects the details needed to process and ship it.</p>
   <h2>How we use it</h2>
-  <p>We use your email to tell you when Drop 001 opens and to share news of Drop 002. You can unsubscribe at any time from any email we send.</p>
+  <p>We use your email to tell you when doors open and to share what comes next. You can unsubscribe at any time from any email we send.</p>
   <h2>Cookies and analytics</h2>
   <p>The site stores your cart and your cookie choice in your browser. Analytics and advertising cookies stay off unless you accept them in the banner. You can change your choice from "Cookie settings" in the footer.</p>
   <h2>Contact</h2>
   <p>Questions about your data: {val(CFG.get('contact_email'), 'contact email')}.</p>"""
     else:
-        title, intro = "Terms", "This is a plain-language draft. Have a lawyer review it before launch."
+        title = "Terms"
         paras = f"""
   <h2>Orders</h2>
   <p>Prices are shown in US dollars. We may cancel an order if a product is unavailable, and will refund it in full.</p>
@@ -471,48 +609,72 @@ def page_legal(kind):
     body = f"""
 <section class="page-head"><div class="col"><h1>{title}</h1></div></section>
 <section style="padding-top:1rem"><div class="col prose">
-  <p class="muted">{intro} {todo('legal review')}</p>{paras}
+  <p class="muted">This is a plain-language draft. {todo('legal review')}</p>{paras}
 </div></section>"""
-    return (f"{kind}.html", title, f"{title} for {CFG['brand']}.", body)
+    return page(f"{kind}.html", title, f"{title} for {CFG['brand']}.", body, chrome=chrome)
 
 
 def page_cart():
     body = """
 <section class="page-head"><div class="col"><h1>Cart</h1></div></section>
 <section style="padding-top:1rem"><div class="col"><div id="cart-root"><noscript><p>The cart needs JavaScript.</p></noscript></div></div></section>"""
-    return ("cart.html", "Cart", "Your cart.", body)
+    return page("cart.html", "Cart", "Your cart.", body)
 
 
 # ---------- build ----------
 
 def runtime_data():
     products = [{
-        "id": p["id"], "kind": "product", "name": p["name"], "price": p["price"], "sizes": p["sizes"],
-        "color_name": color_of(p)["name"], "slug": p["slug"], "shopify_variant_ids": p.get("shopify_variant_ids", {}),
+        "id": p["id"], "kind": "product", "name": f"{tier_name(p)} {p['name'].lower()}", "price": p["price"] if SHOW_PRICES else None,
+        "sizes": p["sizes"], "color_name": color_of(p)["name"], "slug": p["slug"],
+        "shopify_variant_ids": p.get("shopify_variant_ids", {}),
     } for p in PRODUCTS]
     bundles = [{
-        "id": b["id"], "kind": "bundle", "name": b["name"], "price": b["price"], "items": b["items"],
+        "id": b["id"], "kind": "bundle", "name": b["name"], "price": b["price"] if SHOW_PRICES else None, "items": b["items"],
         "shopify_variant_ids": b.get("shopify_variant_ids", {}),
     } for b in BUNDLES]
     public_cfg = {k: CFG[k] for k in ("brand", "launch", "commerce", "email", "analytics")}
     return "window.MR = " + json.dumps({"config": public_cfg, "products": products, "bundles": bundles}, indent=1) + ";\n"
 
 
-def main():
-    if OUT.exists():
-        shutil.rmtree(OUT)
-    shutil.copytree(SRC, OUT, ignore=shutil.ignore_patterns("maison-rivault-logo-*"))
-    (OUT / "assets" / "js" / "data.js").write_text(runtime_data())
+def full_store():
+    pages = [page_home(), page_shop(), page_bundles(), page_story(), page_coming_next(), page_size(),
+             page_shipping(), page_faq(), page_contact(), page_legal("privacy"), page_legal("terms"), page_cart()]
+    return pages + [page_product(p) for p in PRODUCTS]
 
-    pages = [page_home(), page_shop(), page_bundles(), page_story(), page_size(), page_shipping(),
-             page_faq(), page_contact(), page_legal("privacy"), page_legal("terms"), page_cart()]
-    pages += [page_product(p) for p in PRODUCTS]
-    for path, title, desc, body in pages:
-        root = "../" if "/" in path else ""
-        out = OUT / path
-        out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(layout(path, title, desc, body, root=root))
-    print(f"Built {len(pages)} pages into {OUT.relative_to(ROOT)}/")
+
+def waitlist_site():
+    return [page_waitlist("index.html"), page_legal("privacy", "simple"), page_legal("terms", "simple")]
+
+
+def write_site(out, pages, preview):
+    STATE["preview"] = preview
+    if out.exists():
+        shutil.rmtree(out)
+    shutil.copytree(SRC, out, ignore=shutil.ignore_patterns("maison-rivault-logo-*"))
+    (out / "assets" / "js" / "data.js").write_text(runtime_data())
+    for pg in pages:
+        root = "../" if "/" in pg["path"] else ""
+        f = out / pg["path"]
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text(layout(pg["path"], pg["title"], pg["desc"], pg["body"], root=root, chrome=pg["chrome"]))
+    print(f"Built {len(pages):>2} pages into {out.relative_to(ROOT)}/")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--mode", choices=["waitlist", "live"], help="override SITE_MODE for ./site")
+    args = ap.parse_args()
+    mode = args.mode or CFG["SITE_MODE"]
+    if mode not in ("waitlist", "live"):
+        raise SystemExit(f'SITE_MODE must be "waitlist" or "live", got {mode!r}')
+
+    # Production output, chosen by SITE_MODE.
+    write_site(ROOT / "site", waitlist_site() if mode == "waitlist" else full_store(), preview=False)
+    print(f"SITE_MODE = {mode}")
+
+    # Full store for design review, plus the waitlist page. Never deploy this folder.
+    write_site(ROOT / "preview", full_store() + [page_waitlist("waitlist.html")], preview=True)
 
 
 if __name__ == "__main__":
