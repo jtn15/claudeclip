@@ -1,0 +1,188 @@
+{
+  "_note": "Prices are placeholders until supplier quotes arrive. Change a price here, keep price_status as 'placeholder' until it is final, then set it to 'final'. Colors are one per style; the assignment below is a placeholder. Fiber content, care and fit are required before launch (fiber content and care labelling are legal requirements for US garments; have a lawyer confirm wording).",
+  "colors": {
+    "navy": { "name": "Navy", "hex": "#1F2A44" },
+    "camel": { "name": "Camel", "hex": "#B58B5A" },
+    "olive": { "name": "Olive", "hex": "#5E6038" },
+    "cream": { "name": "Cream", "hex": "#E8DFCB" }
+  },
+  "products": [
+    {
+      "id": "quarter-zip",
+      "slug": "midweight-quarter-zip",
+      "name": "Midweight quarter-zip",
+      "type": "Tops",
+      "color": "navy",
+      "color_status": "placeholder",
+      "price": 79,
+      "price_status": "placeholder",
+      "sizes": ["S", "M", "L", "XL", "XXL"],
+      "availability": "launch",
+      "summary": "The core piece of Drop 001. A midweight knit with a short zip at the collar, made to sit under an overshirt or on its own.",
+      "images": [
+        { "src": null, "alt": "Midweight quarter-zip in navy, front", "caption": "Product photo: quarter-zip, front" },
+        { "src": null, "alt": "Midweight quarter-zip in navy, back", "caption": "Product photo: quarter-zip, back" },
+        { "src": null, "alt": "Close-up of the quarter-zip collar and zipper", "caption": "Product photo: quarter-zip, collar and zipper" },
+        { "src": null, "alt": "Close-up of the knit texture", "caption": "Product photo: quarter-zip, knit texture" }
+      ],
+      "fiber": null,
+      "fit": null,
+      "care": null,
+      "shopify_variant_ids": {}
+    },
+    {
+      "id": "knit-polo",
+      "slug": "long-sleeve-knit-polo",
+      "name": "Long-sleeve knit polo",
+      "type": "Tops",
+      "color": "cream",
+      "color_status": "placeholder",
+      "price": 64,
+      "price_status": "placeholder",
+      "sizes": ["S", "M", "L", "XL", "XXL"],
+      "availability": "launch",
+      "summary": "A long-sleeve polo in a fine knit. Wears alone in mild weather and layers under the quarter-zip or overshirt in cold.",
+      "images": [
+        { "src": null, "alt": "Long-sleeve knit polo in cream, front", "caption": "Product photo: knit polo, front" },
+        { "src": null, "alt": "Long-sleeve knit polo in cream, back", "caption": "Product photo: knit polo, back" },
+        { "src": null, "alt": "Close-up of the polo collar and placket", "caption": "Product photo: knit polo, collar and placket" },
+        { "src": null, "alt": "Close-up of the knit texture", "caption": "Product photo: knit polo, knit texture" }
+      ],
+      "fiber": null,
+      "fit": null,
+      "care": null,
+      "shopify_variant_ids": {}
+    },
+    {
+      "id": "crewneck",
+      "slug": "knit-crewneck",
+      "name": "Knit crewneck",
+      "type": "Tops",
+      "color": "olive",
+      "color_status": "placeholder",
+      "price": 68,
+      "price_status": "placeholder",
+      "sizes": ["S", "M", "L", "XL", "XXL"],
+      "availability": "launch",
+      "name_status": "crewneck or mock-neck is still undecided",
+      "summary": "A plain knit crewneck. The simplest piece in the drop and the one that pairs with everything else.",
+      "images": [
+        { "src": null, "alt": "Knit crewneck in olive, front", "caption": "Product photo: crewneck, front" },
+        { "src": null, "alt": "Knit crewneck in olive, back", "caption": "Product photo: crewneck, back" },
+        { "src": null, "alt": "Close-up of the crewneck neckline and rib", "caption": "Product photo: crewneck, neckline" },
+        { "src": null, "alt": "Close-up of the knit texture", "caption": "Product photo: crewneck, knit texture" }
+      ],
+      "fiber": null,
+      "fit": null,
+      "care": null,
+      "shopify_variant_ids": {}
+    },
+    {
+      "id": "overshirt",
+      "slug": "overshirt",
+      "name": "Overshirt",
+      "type": "Outerwear",
+      "color": "camel",
+      "color_status": "placeholder",
+      "price": 98,
+      "price_status": "placeholder",
+      "sizes": ["S", "M", "L", "XL", "XXL"],
+      "availability": "tbc",
+      "availability_note": "The overshirt may arrive after the rest of Drop 001.",
+      "summary": "A shirt-jacket cut to sit over the knits. The outer layer of the drop.",
+      "images": [
+        { "src": null, "alt": "Overshirt in camel, front", "caption": "Product photo: overshirt, front" },
+        { "src": null, "alt": "Overshirt in camel, back", "caption": "Product photo: overshirt, back" },
+        { "src": null, "alt": "Close-up of the overshirt collar and buttons", "caption": "Product photo: overshirt, collar and buttons" },
+        { "src": null, "alt": "Close-up of the fabric texture", "caption": "Product photo: overshirt, fabric texture" }
+      ],
+      "fiber": null,
+      "fit": null,
+      "care": null,
+      "shopify_variant_ids": {}
+    },
+    {
+      "id": "scarf",
+      "slug": "scarf",
+      "name": "Scarf",
+      "type": "Accessories",
+      "color": "camel",
+      "color_status": "placeholder",
+      "price": 38,
+      "price_status": "placeholder",
+      "sizes": ["One size"],
+      "availability": "launch",
+      "summary": "A knit scarf in the same yarn family as the rest of the drop.",
+      "images": [
+        { "src": null, "alt": "Scarf in camel, laid flat", "caption": "Product photo: scarf, flat" },
+        { "src": null, "alt": "Scarf in camel, worn", "caption": "Product photo: scarf, worn" },
+        { "src": null, "alt": "Close-up of the scarf knit and edge", "caption": "Product photo: scarf, knit texture" }
+      ],
+      "fiber": null,
+      "fit": null,
+      "care": null,
+      "shopify_variant_ids": {}
+    },
+    {
+      "id": "beanie",
+      "slug": "beanie",
+      "name": "Beanie",
+      "type": "Accessories",
+      "color": "navy",
+      "color_status": "placeholder",
+      "price": 28,
+      "price_status": "placeholder",
+      "sizes": ["One size"],
+      "availability": "launch",
+      "summary": "A plain knit beanie. Pairs with the scarf in The Cold Morning Set.",
+      "images": [
+        { "src": null, "alt": "Beanie in navy, front", "caption": "Product photo: beanie, front" },
+        { "src": null, "alt": "Beanie in navy, worn", "caption": "Product photo: beanie, worn" },
+        { "src": null, "alt": "Close-up of the beanie knit and cuff", "caption": "Product photo: beanie, knit texture" }
+      ],
+      "fiber": null,
+      "fit": null,
+      "care": null,
+      "shopify_variant_ids": {}
+    }
+  ],
+  "bundles": [
+    {
+      "id": "layering",
+      "slug": "the-layering-bundle",
+      "name": "The Layering Bundle",
+      "items": ["quarter-zip", "knit-polo"],
+      "price": 129,
+      "price_status": "placeholder",
+      "shopify_variant_ids": {}
+    },
+    {
+      "id": "cold-morning",
+      "slug": "the-cold-morning-set",
+      "name": "The Cold Morning Set",
+      "items": ["beanie", "scarf"],
+      "price": 59,
+      "price_status": "placeholder",
+      "shopify_variant_ids": {}
+    },
+    {
+      "id": "weekend-layers",
+      "slug": "the-weekend-layers",
+      "name": "The Weekend Layers",
+      "items": ["overshirt", "crewneck"],
+      "price": 149,
+      "price_status": "placeholder",
+      "shopify_variant_ids": {}
+    },
+    {
+      "id": "full-rotation",
+      "slug": "the-full-rotation",
+      "name": "The Full Rotation",
+      "items": ["quarter-zip", "knit-polo", "crewneck", "overshirt", "scarf", "beanie"],
+      "price": 339,
+      "price_status": "placeholder",
+      "shopify_variant_ids": {}
+    }
+  ],
+  "drop_two": ["Cardigan", "Trousers", "Loafers", "Boots"]
+}

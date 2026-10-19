@@ -1,0 +1,44 @@
+{
+  "_note": "Every empty value below renders as a visible [confirm: ...] marker on the site and is reported by tools/check_placeholders.py. Fill them in, then run: python3 build.py",
+  "brand": "Maison Rivault",
+  "tagline": "Quiet layers for every season.",
+  "tagline_alternates": ["Dress sharp. Look effortless.", "Understated by design."],
+  "story_sentence": "Maison Rivault makes quiet, well-made knitwear for men who want to look put-together without trying, built in layers you can wear from the first cold morning to the last.",
+  "established": "2026",
+  "location": "",
+  "domain": "",
+  "instagram_handle": "",
+  "contact_email": "",
+  "launch": {
+    "date": "2026-11-23",
+    "label": "November 23",
+    "timezone_offset": "-07:00",
+    "launch_price_window_end": null
+  },
+  "commerce": {
+    "force_open": false,
+    "currency": "USD",
+    "shopify_domain": "",
+    "storefront_note": "Cart and checkout are handled by Shopify. Until shopify_domain and each variant id are filled in, checkout stays disabled."
+  },
+  "email": {
+    "provider": "",
+    "klaviyo_public_key": "",
+    "klaviyo_list_id": "",
+    "generic_endpoint": ""
+  },
+  "analytics": {
+    "ga4_id": "",
+    "meta_pixel_id": ""
+  },
+  "shipping": {
+    "estimate": "",
+    "cost": "",
+    "regions": ""
+  },
+  "returns": {
+    "window_days": "",
+    "conditions": "",
+    "return_shipping": ""
+  }
+}
