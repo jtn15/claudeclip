@@ -1,0 +1,58 @@
+# Example brand profile (a fictional client). Copy it, or run `socialcrew onboard`, and make it real.
+# Every agent reads this file. Specific beats generic: real offers, real proof, the customer's own words.
+client: Desert Ridge Roofing
+business: Family-owned residential roofing in the East Valley. Tile underlayment replacement, shingle re-roofs,
+  monsoon storm repair.
+location: Mesa, Gilbert, Chandler and Queen Creek, AZ
+website: https://example.com
+offers:
+- Free 21-point roof inspection with photo report
+- Tile underlayment replacement (most tile roofs here need it at 20-25 years)
+- Emergency monsoon tarping within 24 hours
+audience: East Valley homeowner, 40-65, house built 1995-2005, just saw a water stain on the ceiling after a
+  storm and doesn't know if it's a $300 fix or a $15,000 problem.
+pains:
+- I don't know if I'm getting ripped off
+- The last roofer never called back
+- Tile looks fine from the street so I didn't think anything was wrong
+- I'm scared of the bill
+desires:
+- A straight answer on what's actually wrong
+- Get it fixed before the next storm
+- Not have to think about the roof for 20 years
+proof:
+- 4.9 stars from 312 Google reviews
+- Family-owned since 2006
+- ROC licensed, bonded and insured
+voice: Plain-spoken, a neighbor who happens to know roofs. Calm, never salesy. Short sentences.
+voice_do:
+- Explain one thing clearly instead of three things vaguely
+- Use real local references (monsoon, 115-degree summers, HOA)
+- Show photos of real jobs
+voice_dont:
+- Scare tactics or fake urgency
+- Industry jargon without explaining it
+banned_words: [synergy, game-changer, top-notch, unparalleled, "#1"]
+content_pillars:
+- name: Roof education
+  description: What's actually going on up there, explained simply
+- name: Proof
+  description: Before/afters, reviews, job stories with real numbers
+- name: Behind the scenes
+  description: The crew, the trucks, a day on a 112-degree roof
+- name: Offer
+  description: The free inspection, and why it's free
+ctas:
+- Book a free inspection at the link in bio
+- Call (480) 555-0123
+- DM us "ROOF" and we'll text you a time
+hashtags: ['#mesaaz', '#gilbertaz', '#chandleraz', '#queencreekaz', '#azroofing', '#monsoonseason', '#tileroof']
+compliance:
+- Never promise insurance will pay for a roof
+- No price quotes in posts; prices only after inspection
+- Don't claim a roof "will" leak; say "can" or "often"
+example_posts:
+- "That brown spot on your ceiling isn't going to fix itself. Most of the time after a monsoon it's a cracked
+  tile or a worn-out underlayment, a $300-$600 fix if you catch it early. We'll come look for free and show you
+  photos of exactly what we see. No pressure, no upsell. Link in bio."
+learnings: []

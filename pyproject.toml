@@ -5,15 +5,16 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "clipengine"
 version = "0.1.0"
-description = "Turn long-form videos you own into short-form vertical clips"
+description = "Short-form clips and on-brand social content for agency clients"
 requires-python = ">=3.11"
 dynamic = ["dependencies"]
 
 [project.scripts]
 clipengine = "clipengine.cli:main"
+socialcrew = "socialcrew.cli:main"
 
 [tool.setuptools]
-packages = ["clipengine"]
+packages = ["clipengine", "socialcrew"]
 
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }

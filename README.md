@@ -113,6 +113,58 @@ A clip may run up to ~0.5s over `--max-len` because of a small padding added aro
 - Face detection uses OpenCV's Haar cascade: fast, no extra model files, but front-facing faces only.
 - Captions use an installed font. If "Arial" isn't available (common on Linux), pass `--font` with an installed font or `--fonts-dir`.
 
+## socialcrew: on-brand Facebook + Instagram content
+
+A team of Claude agents that **creates and tailors** a week of posts per client. It doesn't post anything:
+you review the content pack, tick what's approved and schedule it yourself (e.g. Meta Business Suite).
+
+| Agent | Job |
+|---|---|
+| Brand strategist (`onboard`) | Reads the client's website + your notes and drafts their brand profile |
+| Content strategist | Plans the week: one specific pain/desire per post, rotating pillars and formats |
+| Copywriter | Writes each post: hook, IG + FB captions, hashtags, CTA, visual brief, AI image prompt, carousel slides or reel script |
+| Editor | Reviews each draft against the brand, rewrites what's generic, scores it |
+| Checker (no AI) | Banned words, IG caption limit, hook cut off by "...more", hashtag count, missing slides/script |
+
+Tailoring lives in one editable file per client, `brands/{client}.yaml`: offers, audience, pains in the
+customer's words, real proof, voice do's/don'ts, banned words, pillars, CTAs, compliance rules, example posts
+and learnings. See `brands/desert-ridge-roofing.yaml` for a filled-in example.
+
+```bash
+# 1. once per client: draft the brand profile, then open the YAML and fix it
+socialcrew onboard --client "Acme Roofing" --website https://acmeroofing.com --notes notes.txt
+
+# 2. every week: plan + write + edit
+socialcrew week --client "Acme Roofing" --posts 5 --focus "Monsoon season; 10% off tile repair through Friday"
+
+# turn clipengine output into reels with captions written around the real footage
+socialcrew week --client "Acme Roofing" --clips-dir "output/Acme Roofing/Owner Interview"
+
+# 3. feed results back so next week is better
+socialcrew learn --client "Acme Roofing" "Before/after carousels got 3x the saves of tips posts"
+```
+
+`--focus` and `--notes` take inline text or a path to a file. `--week` takes any date in the target week
+(default: next week).
+
+Output:
+
+```
+content/{client}/{week monday}/
+  content_pack.md   review doc: summary table, then every post with approve/changes checkboxes
+  posts.json        everything, including scores, editor notes and warnings
+  posts.csv         one row per post, for spreadsheets or a scheduler import
+```
+
+| Variable | Default | Notes |
+|---|---|---|
+| `SOCIALCREW_MODEL` | `claude-sonnet-5-5` | Claude model for every agent |
+| `SOCIALCREW_BRANDS_DIR` | `brands` | where brand profiles live |
+| `SOCIALCREW_OUTPUT_DIR` | `content` | |
+
+Cost: about 2 Claude calls per post plus 1 for the plan (11 calls for a 5-post week). Posts are written 4 at
+a time; one failed post doesn't sink the week, it's listed in the pack to re-run.
+
 ## Development
 
 ```bash
