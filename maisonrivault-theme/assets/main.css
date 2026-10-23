@@ -93,7 +93,8 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
 .teaser-mono { display: block; height: auto; }
 .logo-mono { display: block; width: 3rem; height: auto; color: var(--green); }
 .nav { display: flex; gap: 2.25rem; flex-wrap: wrap; }
-.nav-extra { display: none; }
+/* Account link inside the mobile menu only; desktop shows the one in .header-right. Needs .nav to outrank ".nav a" below. */
+.nav .nav-extra { display: none; }
 .nav a, .header-link, .menu-btn { text-decoration: none; display: inline-flex; align-items: center; min-height: var(--tap); }
 .nav a:hover, .nav a[aria-current="page"] { text-decoration: underline; text-underline-offset: 0.45em; }
 .header-right { display: flex; align-items: center; gap: 1.25rem; }
@@ -109,7 +110,7 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
   .header-right { gap: 0.9rem; }
   .js .site-header .wrap { flex-wrap: nowrap; }
   .js .header-link-secondary:not(.header-search) { display: none; }
-  .js .nav-extra { display: inline-flex; }
+  .js .nav .nav-extra { display: inline-flex; }
 }
 
 /* Buttons */

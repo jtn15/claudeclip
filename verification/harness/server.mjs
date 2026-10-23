@@ -59,7 +59,7 @@ const linklists = {
 };
 const policies = [['Refund policy', 'refund-policy'], ['Privacy policy', 'privacy-policy'], ['Terms of service', 'terms-of-service'], ['Shipping policy', 'shipping-policy']].map(([t, h]) => ({ title: t, url: `/policies/${h}`, body: '' }));
 const shop = {
-  name: 'Maison Rivault', description: '', customer_accounts_enabled: false, policies, refund_policy: { body: '' }, shipping_policy: { body: '' },
+  name: 'Maison Rivault', description: '', customer_accounts_enabled: !!process.env.MOCK_ACCOUNTS, policies, refund_policy: { body: '' }, shipping_policy: { body: '' },
   enabled_payment_types: ['visa', 'master', 'american_express', 'apple_pay', 'google_pay', 'shopify_pay', 'paypal'], currency: 'USD',
 };
 const mkCart = (n) => {
