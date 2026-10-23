@@ -1,0 +1,49 @@
+{%- comment -%}
+  Welcome popup: step 1 email (for the discount), step 2 optional phone number, step 3 the discount code.
+  Signups are saved by Shopify as customers (Customers > Export gives you the CSV).
+  It only appears when a discount code is set in Theme settings > Welcome popup, so it never promises a discount that does not exist.
+  Add ?popup=1 to any page address to open it for testing.
+{%- endcomment -%}
+{%- assign popup_code = settings.popup_discount_code | strip -%}
+{%- if settings.popup_enabled and popup_code != blank -%}
+  <dialog class="popup" id="welcome-popup" aria-labelledby="popup-title"
+    data-delay="{{ settings.popup_delay | default: 8 }}"
+    data-code="{{ popup_code | escape }}"
+    data-discount-url="{{ routes.root_url }}discount/{{ popup_code | url_encode }}">
+    <button class="popup-close" type="button" data-popup-close aria-label="Close">&times;</button>
+    {%- form 'customer', id: 'popup-form', class: 'popup-form' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter,welcome-popup">
+
+      <div class="popup-step" data-step="1">
+        <p class="label muted">{{ shop.name }}</p>
+        <h2 id="popup-title">{{ settings.popup_headline }}</h2>
+        <p>{{ settings.popup_text }}</p>
+        <label class="label" for="popup-email">{{ 'signup.email' | t }}</label>
+        <input id="popup-email" type="email" name="contact[email]" autocomplete="email" placeholder="you@example.com" required>
+        <button class="btn btn-block" type="submit">{{ settings.popup_button }}</button>
+        <p class="small">{{ settings.popup_email_note }}</p>
+        <button class="linkbtn" type="button" data-popup-close>No thanks</button>
+      </div>
+
+      <div class="popup-step" data-step="2" hidden>
+        <h2>One more thing</h2>
+        <p>{{ settings.popup_phone_text }}</p>
+        <label class="label" for="popup-phone">Mobile number</label>
+        <input id="popup-phone" type="tel" name="contact[phone]" autocomplete="tel" inputmode="tel" placeholder="(555) 555-5555" disabled>
+        <p class="small popup-consent">{{ settings.popup_consent }}</p>
+        <button class="btn btn-block" type="submit">Save my number</button>
+        <button class="linkbtn" type="button" data-popup-skip>Skip</button>
+      </div>
+
+      <div class="popup-step" data-step="3" hidden>
+        <h2>{{ settings.popup_offer | default: 'Your discount' }}, unlocked</h2>
+        <p>Use this code at checkout:</p>
+        <p class="popup-code" data-popup-code>{{ popup_code | escape }}</p>
+        <button class="btn btn-quiet btn-block" type="button" data-popup-copy>Copy code</button>
+        <a class="btn btn-block popup-apply" href="{{ routes.root_url }}discount/{{ popup_code | url_encode }}">Apply and keep shopping</a>
+      </div>
+
+      <p class="form-msg form-error popup-error" role="alert" hidden></p>
+    {%- endform -%}
+  </dialog>
+{%- endif -%}

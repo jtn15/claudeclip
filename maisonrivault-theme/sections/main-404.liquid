@@ -1,0 +1,18 @@
+<section class="page-head"><div class="col"><h1>{{ 'general.not_found_title' | t }}</h1></div></section>
+<section class="page-body">
+  <div class="col">
+    <p>{{ 'general.not_found_text' | t }}</p>
+    <form class="search-form" action="{{ routes.search_url }}" method="get" role="search">
+      <label class="visually-hidden" for="search-404">{{ 'general.search' | t }}</label>
+      <input id="search-404" type="search" name="q" placeholder="{{ 'general.search' | t }}" autocomplete="off">
+      <button class="btn" type="submit">{{ 'general.search' | t }}</button>
+    </form>
+    <p><a class="btn btn-quiet" href="{{ routes.root_url }}">{{ 'general.back_home' | t }}</a></p>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Not found"
+}
+{% endschema %}

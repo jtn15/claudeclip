@@ -1,0 +1,26 @@
+<section class="story-block">
+  <div class="col center">
+    {%- if section.settings.statement != blank -%}<p class="statement">{{ section.settings.statement }}</p>{%- endif -%}
+    {%- capture meta_line -%}
+      {%- if settings.show_established and settings.established != blank -%}Est. {{ settings.established | escape }}{%- endif -%}
+      {%- if settings.show_established and settings.established != blank and settings.location != blank %} &middot; {% endif -%}
+      {%- if settings.location != blank -%}{{ settings.location | escape }}{%- endif -%}
+    {%- endcapture -%}
+    {%- assign meta_trimmed = meta_line | strip -%}
+    {%- if meta_trimmed != blank -%}<p class="label muted">{{ meta_trimmed }}</p>{%- endif -%}
+    {%- if section.settings.link != blank -%}
+      <p class="story-link"><a class="label" href="{{ section.settings.link }}">Our story</a></p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Story block",
+  "settings": [
+    { "type": "textarea", "id": "statement", "label": "Statement", "default": "Maison Rivault makes menswear built to layer, in easy neutrals, at an easy price." },
+    { "type": "url", "id": "link", "label": "Link to the Our Story page" }
+  ],
+  "presets": [{ "name": "Story block" }]
+}
+{% endschema %}

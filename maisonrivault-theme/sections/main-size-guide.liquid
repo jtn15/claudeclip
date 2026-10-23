@@ -1,0 +1,56 @@
+<section class="page-head"><div class="col"><h1>{{ page.title | escape }}</h1></div></section>
+<section class="page-body">
+  <div class="col prose">
+    {%- assign has_data = false -%}
+    {%- for block in section.blocks -%}
+      {%- if block.settings.chest != blank or block.settings.length != blank or block.settings.sleeve != blank or block.settings.waist != blank -%}{%- assign has_data = true -%}{%- endif -%}
+    {%- endfor -%}
+
+    {%- if has_data or request.design_mode -%}
+      <p>Garment measurements in inches, taken flat. Compare them with a piece you already wear and like.</p>
+      <div class="table-scroll">
+        <table>
+          <caption class="visually-hidden">Size chart</caption>
+          <thead><tr><th scope="col">Size</th><th scope="col">Chest</th><th scope="col">Length</th><th scope="col">Sleeve</th><th scope="col">Waist</th></tr></thead>
+          <tbody>
+            {%- for block in section.blocks -%}
+              {%- if block.settings.chest != blank or block.settings.length != blank or block.settings.sleeve != blank or block.settings.waist != blank or request.design_mode -%}
+                <tr {{ block.shopify_attributes }}>
+                  <th scope="row">{{ block.settings.size }}</th>
+                  <td>{% if block.settings.chest != blank %}{{ block.settings.chest }}{% else %}&ndash;{% endif %}</td>
+                  <td>{% if block.settings.length != blank %}{{ block.settings.length }}{% else %}&ndash;{% endif %}</td>
+                  <td>{% if block.settings.sleeve != blank %}{{ block.settings.sleeve }}{% else %}&ndash;{% endif %}</td>
+                  <td>{% if block.settings.waist != blank %}{{ block.settings.waist }}{% else %}&ndash;{% endif %}</td>
+                </tr>
+              {%- endif -%}
+            {%- endfor -%}
+          </tbody>
+        </table>
+      </div>
+      {%- unless has_data -%}<p>{% render 'todo', label: 'fill in the size rows (chest, length, sleeve, waist) on this page in the theme editor' %}</p>{%- endunless -%}
+      <h2>How to measure</h2>
+      <p>Lay a favorite piece flat. Measure across the chest, from underarm to underarm, and double it. Measure length from the high point of the shoulder to the hem.</p>
+    {%- endif -%}
+    {{ page.content }}
+    <p>Questions about fit: <a href="{% render 'page-url', key: 'contact' %}">contact us</a> and we will help you pick a size.</p>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Size guide",
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Size row",
+      "settings": [
+        { "type": "text", "id": "size", "label": "Size", "default": "M" },
+        { "type": "text", "id": "chest", "label": "Chest (inches)" },
+        { "type": "text", "id": "length", "label": "Length (inches)" },
+        { "type": "text", "id": "sleeve", "label": "Sleeve (inches)" },
+        { "type": "text", "id": "waist", "label": "Waist (inches)", "info": "For jeans and trousers." }
+      ]
+    }
+  ]
+}
+{% endschema %}

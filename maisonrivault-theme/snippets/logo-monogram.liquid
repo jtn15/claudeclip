@@ -1,0 +1,6 @@
+{%- comment -%}Brand logo. Uses the uploaded logo image when set, else the inline outline. Param: class{%- endcomment -%}
+{%- if settings.logo != blank and settings.use_logo_image -%}
+  {{ settings.logo | image_url: width: 600 | image_tag: class: class, alt: shop.name, loading: 'eager', widths: '300, 600', sizes: '300px' }}
+{%- else -%}
+  <svg class="{{ class }}" focusable="false" viewBox="1810 520 1530 1205" role="img" aria-label="{{ shop.name | escape }}" fill="currentColor"><use href="#mr-logo"/></svg>
+{%- endif -%}

@@ -1,0 +1,65 @@
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        {% render 'logo-monogram', class: 'logo-mono' %}
+        {%- if settings.tagline != blank -%}<p class="muted footer-tagline">{{ settings.tagline }}</p>{%- endif -%}
+      </div>
+      {%- for block in section.blocks -%}
+        <div class="footer-col" {{ block.shopify_attributes }}>
+          {%- if block.settings.heading != blank -%}<h2>{{ block.settings.heading }}</h2>{%- endif -%}
+          <ul>
+            {%- for link in block.settings.menu.links -%}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {%- endfor -%}
+            {%- if block.settings.show_policies -%}
+              {%- for policy in shop.policies -%}
+                <li><a href="{{ policy.url }}">{{ policy.title }}</a></li>
+              {%- endfor -%}
+            {%- endif -%}
+            {%- if block.settings.show_instagram -%}
+              {%- if settings.instagram_handle != blank -%}
+                <li><a href="https://www.instagram.com/{{ settings.instagram_handle | remove: '@' | url_encode }}/" rel="noopener">Instagram</a></li>
+              {%- elsif request.design_mode -%}
+                <li>Instagram {% render 'todo', label: 'Instagram handle (theme settings > Contact and social)' %}</li>
+              {%- endif -%}
+            {%- endif -%}
+          </ul>
+        </div>
+      {%- endfor -%}
+    </div>
+    <div class="footer-base">
+      <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {% render 'returns-line' %} <a href="{% render 'page-url', key: 'shipping' %}">Shipping and returns</a></p>
+      {%- if settings.show_established and settings.established != blank -%}<p>Est. {{ settings.established | escape }}</p>{%- endif -%}
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "links",
+      "name": "Link column",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Help" },
+        { "type": "link_list", "id": "menu", "label": "Menu" },
+        { "type": "checkbox", "id": "show_policies", "label": "List Shopify policies (privacy, terms, refund, shipping)", "default": false },
+        { "type": "checkbox", "id": "show_instagram", "label": "Show Instagram link", "default": false }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer",
+      "blocks": [
+        { "type": "links", "settings": { "heading": "Help", "menu": "footer" } },
+        { "type": "links", "settings": { "heading": "Legal", "show_policies": true } },
+        { "type": "links", "settings": { "heading": "Follow", "show_instagram": true } }
+      ]
+    }
+  ]
+}
+{% endschema %}

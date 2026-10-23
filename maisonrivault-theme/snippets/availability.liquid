@@ -1,0 +1,16 @@
+{%- comment -%}
+  Availability line. Params: mode (in_stock | made_to_order | preorder)
+  Each mode prints only the windows that are filled in theme settings. The product page also refuses to sell
+  made-to-order and preorder items until their windows (and the preorder charge policy) are set.
+{%- endcomment -%}
+<p class="status-line">
+  {%- case mode -%}
+    {%- when 'made_to_order' -%}
+      {{ 'products.made_to_order' | t }}{% if settings.made_to_order_delivery != blank %} {{ 'products.delivery_window' | t: time: settings.made_to_order_delivery }}{% endif %}
+    {%- when 'preorder' -%}
+      {{ 'products.preorder_label' | t }}{% if settings.preorder_ship != blank %} {{ 'products.expected_ship' | t: time: settings.preorder_ship }}{% endif %}
+      {% if settings.preorder_policy != blank %}{{ settings.preorder_policy | escape }}{% endif %}
+    {%- else -%}
+      {{ 'products.in_stock' | t }}{% if settings.in_stock_ship != blank %} {{ 'products.ships_within' | t: time: settings.in_stock_ship }}{% endif %}
+  {%- endcase -%}
+</p>

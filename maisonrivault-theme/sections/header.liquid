@@ -1,0 +1,38 @@
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }}, {{ 'general.home' | t }}">
+      {% render 'logo-lockup', class: 'logo-lockup' %}
+    </a>
+    <nav id="site-nav" class="nav label" aria-label="Main">
+      {%- for link in section.settings.menu.links -%}
+        {%- assign link_title = link.title | downcase -%}
+        {%- if link_title == 'search' or link_title == 'account' -%}{%- continue -%}{%- endif -%}
+        <a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %}>{{ link.title }}</a>
+      {%- endfor -%}
+      {%- if shop.customer_accounts_enabled -%}<a class="nav-extra" href="{{ routes.account_url }}">{{ 'general.account' | t }}</a>{%- endif -%}
+    </nav>
+    <div class="header-right label">
+      <a class="header-link header-link-secondary header-search" href="{{ routes.search_url }}" aria-label="{{ 'general.search' | t }}"><svg class="icon-search" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></a>
+      {%- if shop.customer_accounts_enabled -%}
+        <a class="header-link header-link-secondary" href="{{ routes.account_url }}">{{ 'general.account' | t }}</a>
+      {%- endif -%}
+      <a class="header-link cart-link" href="{{ routes.cart_url }}">{{ 'general.cart' | t }} (<span data-cart-count>{{ cart.item_count }}</span>)</a>
+      <button class="menu-btn label" type="button" aria-expanded="false" aria-controls="site-nav">{{ 'general.menu' | t }}</button>
+    </div>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu",
+      "info": "Suggested items: Shop, Our Story, Contact."
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,27 @@
+{%- comment -%}
+  Email capture using Shopify's own customer form, so signups land in Customers with marketing consent
+  and sync to Shopify Email or Klaviyo.
+  Params: form_id, tag (optional extra tag), button, success, note (optional small print)
+
+  The success and error messages are rendered INSIDE the form block, because `form` only exists there.
+  The "newsletter" tag is what makes Shopify record the person as subscribed to marketing.
+  Tags are submitted from the browser and can be tampered with, so never key privileged automations on them.
+{%- endcomment -%}
+{%- assign extra_tag = tag | handleize -%}
+{%- if success == blank %}{% assign success = 'signup.success' | t %}{% endif -%}
+{%- if button == blank %}{% assign button = 'signup.button' | t %}{% endif -%}
+{%- if note == blank %}{% assign note = 'signup.note' | t %}{% endif -%}
+{%- form 'customer', id: form_id, class: 'signup' -%}
+  {%- if form.posted_successfully? -%}
+    <p class="form-msg" role="status">{{ success }}</p>
+  {%- else -%}
+    <input type="hidden" name="contact[tags]" value="newsletter{% if extra_tag != blank and extra_tag != 'newsletter' %},{{ extra_tag | escape }}{% endif %}">
+    <label class="label signup-label" for="email-{{ form_id }}">{{ 'signup.email' | t }}</label>
+    <input id="email-{{ form_id }}" type="email" name="contact[email]" autocomplete="email" placeholder="you@example.com" required{% if form.errors %} aria-invalid="true" aria-describedby="signup-error-{{ form_id }}"{% endif %}>
+    <button class="btn" type="submit">{{ button }}</button>
+    {%- if form.errors -%}
+      <div class="form-msg form-error" id="signup-error-{{ form_id }}" role="alert">{{ form.errors | default_errors }}</div>
+    {%- endif -%}
+  {%- endif -%}
+{%- endform -%}
+<p class="small">{{ note }}</p>

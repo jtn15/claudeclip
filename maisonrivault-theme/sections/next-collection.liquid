@@ -1,0 +1,40 @@
+<section class="image-text next-collection" id="next-{{ section.id }}">
+  <div class="wrap image-text-grid">
+    <div class="image-text-art">
+      {%- if section.settings.image != blank -%}
+        {% render 'media-or-placeholder', media: section.settings.image, alt: section.settings.image_alt %}
+      {%- else -%}
+        <div class="media next-mono">{% render 'logo-monogram', class: 'next-mono-logo' %}</div>
+      {%- endif -%}
+    </div>
+    <div class="image-text-copy">
+      {%- if section.settings.eyebrow != blank -%}<p class="label muted">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      {%- if section.settings.heading != blank -%}<h2>{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- if section.settings.status != blank -%}<p class="label next-status">{{ section.settings.status }}</p>{%- endif -%}
+      {%- if section.settings.text != blank -%}<p>{{ section.settings.text }}</p>{%- endif -%}
+      {%- if section.settings.show_signup -%}
+        {% render 'signup-form', form_id: section.id, tag: section.settings.tag, button: section.settings.button, success: section.settings.success, note: section.settings.note %}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Next collection",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Image", "info": "Optional. Leave empty to show the monogram." },
+    { "type": "text", "id": "image_alt", "label": "Image description" },
+    { "type": "text", "id": "eyebrow", "label": "Small label", "default": "Next collection" },
+    { "type": "text", "id": "heading", "label": "Collection name", "default": "The Signature Collection" },
+    { "type": "text", "id": "status", "label": "Status label", "default": "Coming soon", "info": "Examples: Coming soon, Drops this fall. Only state a date you can meet." },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "A step up from the Essentials. Join the list to hear first." },
+    { "type": "checkbox", "id": "show_signup", "label": "Show email signup", "default": true },
+    { "type": "text", "id": "button", "label": "Button label", "default": "Notify me" },
+    { "type": "text", "id": "success", "label": "Success message", "default": "You are on the list. We will email you when it launches." },
+    { "type": "text", "id": "note", "label": "Small print", "default": "One email when it is ready. Unsubscribe any time." },
+    { "type": "text", "id": "tag", "label": "Extra customer tag", "default": "next-collection", "info": "Added alongside the newsletter tag so you can email just this list." }
+  ],
+  "presets": [{ "name": "Next collection" }]
+}
+{% endschema %}

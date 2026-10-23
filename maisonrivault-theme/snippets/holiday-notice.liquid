@@ -1,0 +1,21 @@
+{%- comment -%}
+  Holiday delivery notice, shown October 1 to December 25 when enabled in theme settings.
+  Unconfirmed: says plainly that delivery before December 25 cannot be promised.
+  Confirmed: states the order cutoff date.
+  Param: heading (true to print an "Holiday orders" heading above the message)
+{%- endcomment -%}
+{%- if settings.holiday_notice -%}
+  {%- assign month = 'now' | date: '%m' | plus: 0 -%}
+  {%- assign day = 'now' | date: '%d' | plus: 0 -%}
+  {%- assign in_season = false -%}
+  {%- if month == 10 or month == 11 -%}{%- assign in_season = true -%}{%- endif -%}
+  {%- if month == 12 and day <= 25 -%}{%- assign in_season = true -%}{%- endif -%}
+  {%- if in_season -%}
+    {%- if heading -%}<h2>Holiday orders</h2>{%- endif -%}
+    {%- if settings.holiday_confirmed and settings.holiday_cutoff != blank -%}
+      <p class="small">Holiday orders: orders placed by {{ settings.holiday_cutoff | escape }} are expected to arrive before December 25.</p>
+    {%- else -%}
+      <p class="small">Holiday orders: we cannot promise delivery before December 25.</p>
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}

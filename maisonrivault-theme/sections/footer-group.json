@@ -1,0 +1,17 @@
+{
+  "name": "Footer",
+  "type": "footer",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "help": { "type": "links", "settings": { "heading": "Help", "menu": "footer" } },
+        "legal": { "type": "links", "settings": { "heading": "Legal", "show_policies": true } },
+        "follow": { "type": "links", "settings": { "heading": "Follow", "show_instagram": true } }
+      },
+      "block_order": ["help", "legal", "follow"],
+      "settings": {}
+    }
+  },
+  "order": ["footer"]
+}

@@ -1,0 +1,50 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-size-guide",
+      "blocks": {
+        "r0": {
+          "type": "row",
+          "settings": {
+            "size": "S"
+          }
+        },
+        "r1": {
+          "type": "row",
+          "settings": {
+            "size": "M"
+          }
+        },
+        "r2": {
+          "type": "row",
+          "settings": {
+            "size": "L"
+          }
+        },
+        "r3": {
+          "type": "row",
+          "settings": {
+            "size": "XL"
+          }
+        },
+        "r4": {
+          "type": "row",
+          "settings": {
+            "size": "XXL"
+          }
+        }
+      },
+      "block_order": [
+        "r0",
+        "r1",
+        "r2",
+        "r3",
+        "r4"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

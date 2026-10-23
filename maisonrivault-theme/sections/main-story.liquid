@@ -1,0 +1,35 @@
+<section class="page-head"><div class="col"><h1>{{ page.title | escape }}</h1></div></section>
+<section class="page-body">
+  <div class="col prose">
+    {%- if section.settings.lede != blank -%}<p class="lede">{{ section.settings.lede }}</p>{%- endif -%}
+    {%- if settings.location != blank -%}<p class="label muted">{{ settings.location | escape }}</p>{%- elsif request.design_mode -%}<p>{% render 'todo', label: 'location (theme settings > Brand)' %}</p>{%- endif -%}
+    {{ section.settings.body }}
+  </div>
+</section>
+{%- if section.settings.show_signup -%}
+  <section class="story-block">
+    <div class="col signup-center">
+      {%- if section.settings.signup_heading != blank -%}<h2>{{ section.settings.signup_heading }}</h2>{%- endif -%}
+      {%- if section.settings.signup_text != blank -%}<p class="muted">{{ section.settings.signup_text }}</p>{%- endif -%}
+      {% render 'signup-form', form_id: 'story', tag: 'story' %}
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Our story",
+  "settings": [
+    { "type": "textarea", "id": "lede", "label": "Opening line", "default": "Maison Rivault makes menswear built to layer, in easy neutrals, at an easy price." },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Story paragraphs",
+      "default": "<p>Maison Rivault starts with a narrow idea: a small set of pieces, in easy neutrals, that go together without effort. Things that sit over and under each other, so a cold morning and a mild afternoon call for the same few things.</p><p>We are a new brand, and we would rather say so than borrow a history. What we offer is a short list of well-chosen pieces, described plainly, with fabric, fit and care stated on every page.</p>"
+    },
+    { "type": "checkbox", "id": "show_signup", "label": "Show email signup", "default": true },
+    { "type": "text", "id": "signup_heading", "label": "Signup heading", "default": "Join the list" },
+    { "type": "text", "id": "signup_text", "label": "Signup text", "default": "New pieces and restocks, straight to your inbox." }
+  ]
+}
+{% endschema %}

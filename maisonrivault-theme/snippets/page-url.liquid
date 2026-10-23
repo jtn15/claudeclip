@@ -1,0 +1,12 @@
+{%- comment -%}
+  URL of a standard page. Uses the page chosen in theme settings (Pages), else the default handle.
+  Param: key = shipping | size | contact | faq | story
+{%- endcomment -%}
+{%- case key -%}
+  {%- when 'shipping' -%}{%- assign picked = settings.shipping_page -%}{%- assign fallback = 'shipping-returns' -%}
+  {%- when 'size' -%}{%- assign picked = settings.size_guide_page -%}{%- assign fallback = 'size-guide' -%}
+  {%- when 'contact' -%}{%- assign picked = settings.contact_page -%}{%- assign fallback = 'contact' -%}
+  {%- when 'faq' -%}{%- assign picked = settings.faq_page -%}{%- assign fallback = 'faq' -%}
+  {%- when 'story' -%}{%- assign picked = settings.story_page -%}{%- assign fallback = 'our-story' -%}
+{%- endcase -%}
+{%- if picked != blank -%}{{ picked.url }}{%- else -%}{{ routes.root_url }}pages/{{ fallback }}{%- endif -%}

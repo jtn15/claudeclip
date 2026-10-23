@@ -1,0 +1,38 @@
+{%- comment -%}
+  Product grid. Uses the picked collection; if none is picked, shows all products.
+{%- endcomment -%}
+{%- assign coll = section.settings.collection -%}
+{%- if coll == blank or coll.products_count == 0 -%}{%- assign coll = collections.all -%}{%- endif -%}
+<section id="section-{{ section.id }}">
+  <div class="wrap">
+    <div class="section-head">
+      {%- if section.settings.heading != blank -%}<h2>{{ section.settings.heading }}</h2>{%- endif -%}
+      <a class="label" href="{{ coll.url }}">{{ 'general.view_all' | t }}</a>
+    </div>
+    {%- if section.settings.blurb != blank -%}
+      <p class="muted section-blurb">{{ section.settings.blurb }}</p>
+    {%- endif -%}
+    {%- if coll.products.size > 0 -%}
+      <div class="grid">
+        {%- for product in coll.products limit: section.settings.limit -%}
+          {% render 'product-card', product: product %}
+        {%- endfor -%}
+      </div>
+    {%- elsif request.design_mode -%}
+      <p class="muted">No products yet. Add products in Shopify admin.</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection grid",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop" },
+    { "type": "text", "id": "blurb", "label": "Short line under the heading" },
+    { "type": "collection", "id": "collection", "label": "Collection", "info": "Leave empty to show all products. Point a second grid at a bundles collection to feature bundles." },
+    { "type": "range", "id": "limit", "label": "Products to show", "min": 2, "max": 12, "step": 1, "default": 8 }
+  ],
+  "presets": [{ "name": "Collection grid" }]
+}
+{% endschema %}

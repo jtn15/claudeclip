@@ -1,0 +1,128 @@
+{%- comment -%}
+  Collection page. Filters and sorting come from Shopify Search & Discovery (Apps > Search & Discovery > Filters),
+  so they work with any tags, product types, vendors, options or metafields you enable there. No tag naming rules.
+  The filter form is a plain GET form, so it works without JavaScript.
+{%- endcomment -%}
+<section class="page-head">
+  <div class="wrap">
+    <h1>{{ collection.title }}</h1>
+    {%- if section.settings.intro != blank -%}<p class="lede">{{ section.settings.intro }}</p>
+    {%- elsif collection.description != blank -%}<div class="lede">{{ collection.description }}</div>{%- endif -%}
+  </div>
+</section>
+<section class="collection-body">
+  <div class="wrap">
+    {%- if section.settings.grid_heading != blank -%}
+      <div class="section-head"><h2>{{ section.settings.grid_heading }}</h2></div>
+    {%- endif -%}
+    {%- assign show_bar = false -%}
+    {%- if section.settings.show_filters and collection.filters.size > 0 -%}{%- assign show_bar = true -%}{%- endif -%}
+    {%- if collection.sort_options.size > 1 -%}{%- assign show_bar = true -%}{%- endif -%}
+    {%- if show_bar -%}
+      <form class="filter-form" method="get" action="{{ collection.url }}" data-auto-submit>
+        <div class="filter-bar">
+          {%- if section.settings.show_filters -%}
+            {%- for filter in collection.filters -%}
+              <details class="filter">
+                <summary class="label">{{ filter.label | escape }}</summary>
+                <div class="filter-body">
+                  {%- if filter.type == 'price_range' -%}
+                    <label class="small" for="filter-min-{{ forloop.index }}">{{ 'filters.from' | t }}</label>
+                    <input id="filter-min-{{ forloop.index }}" type="number" name="{{ filter.min_value.param_name }}" inputmode="decimal" min="0" placeholder="0"
+                      {% if filter.min_value.value != nil %}value="{{ filter.min_value.value | divided_by: 100.0 }}"{% endif %}>
+                    <label class="small" for="filter-max-{{ forloop.index }}">{{ 'filters.to' | t }}</label>
+                    <input id="filter-max-{{ forloop.index }}" type="number" name="{{ filter.max_value.param_name }}" inputmode="decimal" min="0" placeholder="{{ filter.range_max | divided_by: 100.0 | ceil }}"
+                      {% if filter.max_value.value != nil %}value="{{ filter.max_value.value | divided_by: 100.0 }}"{% endif %}>
+                  {%- else -%}
+                    {%- for value in filter.values -%}
+                      <label class="check">
+                        <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}"{% if value.active %} checked{% endif %}{% if value.count == 0 and value.active == false %} disabled{% endif %}>
+                        <span>{{ value.label | escape }} <span class="muted">({{ value.count }})</span></span>
+                      </label>
+                    {%- endfor -%}
+                  {%- endif -%}
+                </div>
+              </details>
+            {%- endfor -%}
+          {%- endif -%}
+          {%- if collection.sort_options.size > 1 -%}
+            <div class="sort">
+              <label class="label" for="sort-by">{{ 'filters.sort' | t }}</label>
+              <select id="sort-by" name="sort_by">
+                {%- for option in collection.sort_options -%}
+                  <option value="{{ option.value }}"{% if option.value == collection.sort_by %} selected{% endif %}>{{ option.name | escape }}</option>
+                {%- endfor -%}
+              </select>
+            </div>
+          {%- endif -%}
+          <noscript><button class="btn btn-quiet" type="submit">{{ 'filters.apply' | t }}</button></noscript>
+        </div>
+        {%- if collection.filters.size > 0 and section.settings.show_filters -%}
+          <div class="active-filters">
+            {%- for filter in collection.filters -%}
+              {%- for value in filter.active_values -%}
+                <a class="chip" href="{{ value.url_to_remove }}">{{ value.label | escape }} <span aria-hidden="true">&times;</span><span class="visually-hidden">Remove filter</span></a>
+              {%- endfor -%}
+              {%- if filter.type == 'price_range' -%}
+                {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+                  <a class="chip" href="{{ filter.url_to_remove }}">{{ filter.label | escape }} <span aria-hidden="true">&times;</span><span class="visually-hidden">Remove filter</span></a>
+                {%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </form>
+    {%- endif -%}
+
+    {%- paginate collection.products by section.settings.per_page -%}
+      {%- if collection.products.size == 0 -%}
+        <p class="muted">{{ 'general.no_products' | t }}</p>
+      {%- else -%}
+        <div class="grid">
+          {%- for product in collection.products -%}
+            {% render 'product-card', product: product %}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+      {%- if paginate.pages > 1 -%}
+        <nav class="pagination label" aria-label="Pagination">
+          {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}">{{ 'general.previous' | t }}</a>{%- endif -%}
+          {%- if paginate.next -%}<a href="{{ paginate.next.url }}">{{ 'general.next' | t }}</a>{%- endif -%}
+        </nav>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+{%- if section.settings.show_next -%}
+  <section class="collection-next" id="next-{{ section.id }}">
+    <div class="wrap">
+      <div class="section-head"><h2>{{ section.settings.next_heading }}</h2></div>
+      {%- if section.settings.next_status != blank -%}<p class="label next-status">{{ section.settings.next_status }}</p>{%- endif -%}
+      {%- if section.settings.next_text != blank -%}<p class="muted">{{ section.settings.next_text }}</p>{%- endif -%}
+      {%- if section.settings.next_signup -%}
+        {% render 'signup-form', form_id: section.id, tag: section.settings.next_tag, button: section.settings.next_button, success: section.settings.next_success %}
+      {%- endif -%}
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Collection",
+  "settings": [
+    { "type": "textarea", "id": "intro", "label": "Intro line", "info": "Leave blank to use the collection description from Shopify." },
+    { "type": "checkbox", "id": "show_filters", "label": "Show filters (set up in Search & Discovery)", "default": true },
+    { "type": "text", "id": "grid_heading", "label": "Heading above the products", "info": "Example: Essentials. Leave blank for none." },
+    { "type": "header", "content": "Coming-soon section below the products" },
+    { "type": "checkbox", "id": "show_next", "label": "Show a coming-soon section", "default": false },
+    { "type": "text", "id": "next_heading", "label": "Name", "default": "Signature" },
+    { "type": "text", "id": "next_status", "label": "Status label", "default": "Coming soon", "info": "Only state a date you can meet." },
+    { "type": "textarea", "id": "next_text", "label": "Text", "default": "A step up from the Essentials. Join the list to hear first." },
+    { "type": "checkbox", "id": "next_signup", "label": "Show email signup", "default": true },
+    { "type": "text", "id": "next_button", "label": "Signup button", "default": "Notify me" },
+    { "type": "text", "id": "next_success", "label": "Signup success message", "default": "You are on the list. We will email you when it launches." },
+    { "type": "text", "id": "next_tag", "label": "Extra customer tag", "default": "next-collection" },
+    { "type": "range", "id": "per_page", "label": "Products per page", "min": 8, "max": 48, "step": 4, "default": 24 }
+  ]
+}
+{% endschema %}

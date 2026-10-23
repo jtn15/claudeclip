@@ -1,0 +1,47 @@
+{%- comment -%}Product card. Params: product, show_hover (optional, default true){%- endcomment -%}
+{%- assign color = product.metafields.custom.color.value -%}
+{%- assign tier = product.metafields.custom.tier.value -%}
+{%- comment -%}Color options shown as small photos of each color (taken from the variant photos), plus a count.{%- endcomment -%}
+{%- assign color_pos = -1 -%}
+{%- for opt in product.options_with_values -%}
+  {%- assign opt_name = opt.name | downcase -%}
+  {%- if opt_name == 'color' or opt_name == 'colour' -%}{%- assign color_pos = forloop.index0 -%}{%- assign color_opt = opt -%}{%- endif -%}
+{%- endfor -%}
+<div class="card">
+  <a class="card-link" href="{{ product.url }}">
+    <div class="card-media">
+      {% render 'media-or-placeholder', media: product.featured_image, alt: product.title, caption: product.title %}
+      {%- if show_hover != false and product.images.size > 1 and product.featured_image != blank -%}
+        {{ product.images[1] | image_url: width: 800 | image_tag: loading: 'lazy', widths: '400, 600, 800', sizes: '(min-width: 64rem) 22vw, 50vw', alt: '', class: 'photo card-alt' }}
+      {%- endif -%}
+      {%- if product.available == false -%}
+        <span class="badge">{{ 'products.sold_out' | t }}</span>
+      {%- elsif product.compare_at_price > product.price -%}
+        <span class="badge badge-sale">{{ 'products.sale' | t }}</span>
+      {%- endif -%}
+    </div>
+    <div class="card-meta">
+      <div>
+        <h3 class="card-name">{{ product.title }}</h3>
+        <div class="card-sub">
+          {%- if color_pos >= 0 -%}
+            <span class="card-swatches">
+              {%- for value in color_opt.values limit: 5 -%}
+                {%- assign swatch_img = nil -%}
+                {%- for v in product.variants -%}
+                  {%- if v.options[color_pos] == value and v.featured_image and swatch_img == nil -%}{%- assign swatch_img = v.featured_image -%}{%- endif -%}
+                {%- endfor -%}
+                {%- if swatch_img -%}<span class="dot">{{ swatch_img | image_url: width: 48 | image_tag: loading: 'lazy', width: 20, height: 20, alt: '' }}</span>{%- else -%}<span class="dot dot-empty"></span>{%- endif -%}
+              {%- endfor -%}
+            </span>
+            {{ color_opt.values.size }} {% if color_opt.values.size == 1 %}color{% else %}colors{% endif %}
+          {%- elsif color != blank -%}{% render 'swatch', color: color %}{{ color }}
+          {%- elsif tier != blank -%}{{ tier }}
+          {%- elsif product.type != blank -%}{{ product.type }}
+          {%- endif -%}
+          <span class="card-sub-price">{% render 'price', product: product %}</span>
+        </div>
+      </div>
+    </div>
+  </a>
+</div>

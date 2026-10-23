@@ -1,0 +1,48 @@
+<section class="page-head">
+  <div class="wrap">
+    <h1>{{ 'general.search' | t }}</h1>
+    <form class="search-form" action="{{ routes.search_url }}" method="get" role="search">
+      <label class="visually-hidden" for="search-q">{{ 'general.search' | t }}</label>
+      <input id="search-q" type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'general.search' | t }}" autocomplete="off">
+      <input type="hidden" name="options[prefix]" value="last">
+      <button class="btn" type="submit">{{ 'general.search' | t }}</button>
+    </form>
+  </div>
+</section>
+<section class="collection-body">
+  <div class="wrap">
+    {%- if search.performed -%}
+      {%- paginate search.results by 24 -%}
+        <p class="muted" role="status">{{ search.results_count }} results for &ldquo;{{ search.terms | escape }}&rdquo;</p>
+        {%- if search.results_count > 0 -%}
+          <div class="grid">
+            {%- for item in search.results -%}
+              {%- if item.object_type == 'product' -%}
+                {% render 'product-card', product: item %}
+              {%- else -%}
+                <div class="card">
+                  <a class="card-link" href="{{ item.url }}">
+                    <h3 class="card-name">{{ item.title | escape }}</h3>
+                    <div class="card-sub">{{ item.content | strip_html | truncatewords: 20 }}</div>
+                  </a>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+        {%- if paginate.pages > 1 -%}
+          <nav class="pagination label" aria-label="Pagination">
+            {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}">{{ 'general.previous' | t }}</a>{%- endif -%}
+            {%- if paginate.next -%}<a href="{{ paginate.next.url }}">{{ 'general.next' | t }}</a>{%- endif -%}
+          </nav>
+        {%- endif -%}
+      {%- endpaginate -%}
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Search"
+}
+{% endschema %}

@@ -1,0 +1,256 @@
+{%- comment -%}
+  Product page. Bundles are handled by Shopify Bundles (they are normal products with their own price and inventory),
+  so nothing here is bundle-specific.
+
+  Metafields (namespace custom): availability, color, tier, fiber, fit, care. See README.md.
+  A product can only be bought when: it is in stock, prices are shown, fiber content is filled in (if required),
+  and, for made-to-order / preorder, the delivery window and charge terms are set in theme settings.
+{%- endcomment -%}
+{%- liquid
+  assign mode = product.metafields.custom.availability.value | default: 'in_stock'
+  assign color = product.metafields.custom.color.value
+  assign tier = product.metafields.custom.tier.value
+  assign fiber = product.metafields.custom.fiber.value
+  assign fit = product.metafields.custom.fit.value
+  assign care = product.metafields.custom.care.value
+  assign size_chart = product.metafields.custom.size_chart.value
+  assign chart_text = product.metafields.custom.size_chart_table.value
+  assign current_variant = product.selected_or_first_available_variant
+
+  assign sellable = true
+  if settings.require_fiber and fiber == blank
+    assign sellable = false
+  endif
+  if mode == 'made_to_order' and settings.made_to_order_delivery == blank
+    assign sellable = false
+  endif
+  if mode == 'preorder'
+    if settings.preorder_ship == blank
+      assign sellable = false
+    endif
+    if settings.preorder_policy == blank
+      assign sellable = false
+    endif
+  endif
+
+  assign can_buy = false
+  if settings.show_prices and product.available and sellable and current_variant.price > 0
+    assign can_buy = true
+  endif
+
+  assign has_size = false
+  for opt in product.options
+    assign opt_down = opt | downcase
+    if opt_down == 'size'
+      assign has_size = true
+    endif
+  endfor
+-%}
+
+{%- capture chart_html -%}
+  {%- if chart_text != blank -%}
+    {%- assign chart_rows = chart_text | newline_to_br | split: '<br />' -%}
+    <table>
+      {%- assign row_n = 0 -%}
+      {%- for row in chart_rows -%}
+        {%- assign row_clean = row | strip -%}
+        {%- if row_clean != blank -%}
+          {%- assign cells = row_clean | split: ',' -%}
+          {%- assign row_n = row_n | plus: 1 -%}
+          {%- if row_n == 1 -%}<thead>{%- endif -%}
+          <tr>{%- for cell in cells -%}{%- if row_n == 1 -%}<th scope="col">{{ cell | strip | escape }}</th>{%- elsif forloop.first -%}<th scope="row">{{ cell | strip | escape }}</th>{%- else -%}<td>{{ cell | strip | escape }}</td>{%- endif -%}{%- endfor -%}</tr>
+          {%- if row_n == 1 -%}</thead><tbody>{%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+      </tbody>
+    </table>
+  {%- elsif size_chart != blank and size_chart.content != blank -%}
+    {{ size_chart.content }}
+  {%- endif -%}
+{%- endcapture -%}
+{%- assign chart_html = chart_html | strip -%}
+
+<section class="product-section">
+  <div class="wrap">
+    <p class="crumbs label"><a href="{{ routes.all_products_collection_url }}">{{ 'general.shop' | t }}</a> / {{ product.title }}</p>
+    <div class="product" data-product-id="{{ product.id }}">
+      <div class="product-gallery" data-gallery>
+        <div class="gallery-track">
+        {%- if product.images.size > 0 -%}
+          {%- comment -%}The selected color's photo goes first; site.js moves the matching photo to the front when the color changes.{%- endcomment -%}
+          {%- assign lead_id = current_variant.featured_image.id -%}
+          {%- if lead_id != blank -%}
+            {%- for image in product.images -%}
+              {%- if image.id == lead_id -%}{% render 'product-gallery-image', image: image, n: forloop.index, product: product, eager: true %}{%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+          {%- for image in product.images limit: 12 -%}
+            {%- unless image.id == lead_id -%}
+              {%- if forloop.first and lead_id == blank -%}
+                {% render 'product-gallery-image', image: image, n: forloop.index, product: product, eager: true %}
+              {%- else -%}
+                {% render 'product-gallery-image', image: image, n: forloop.index, product: product %}
+              {%- endif -%}
+            {%- endunless -%}
+          {%- endfor -%}
+        {%- else -%}
+          {% render 'media-or-placeholder', alt: product.title, caption: product.title %}
+        {%- endif -%}
+        </div>
+      </div>
+
+      <div class="product-info">
+        {%- if tier != blank or product.type != blank -%}
+          <p class="label muted">{{ tier | default: product.type }}</p>
+        {%- endif -%}
+        <h1>{{ product.title }}</h1>
+        <p class="js-price" data-price-wrap>{% render 'price', product: product, variant: current_variant %}</p>
+        {%- if color != blank -%}
+          <p class="card-sub">{% render 'swatch', color: color %}{{ color }}</p>
+        {%- endif -%}
+
+        {%- if product.description != blank -%}
+          <div class="product-desc">{{ product.description }}</div>
+        {%- endif -%}
+
+        {% render 'availability', mode: mode %}
+
+        {%- form 'product', product, id: 'product-form', class: 'product-form', data-cart-add: routes.cart_add_url, data-cart-url: routes.cart_url -%}
+          {%- if product.has_only_default_variant -%}
+            <input type="hidden" name="id" value="{{ current_variant.id }}">
+          {%- else -%}
+            {%- comment -%}
+              One group of buttons per option (Color, Size...). site.js finds the matching variant and sets the hidden select.
+              Without JavaScript the plain select lists every variant, so purchase still works.
+            {%- endcomment -%}
+            <select class="variant-select" name="id" aria-label="{{ 'products.choose_option' | t }}">
+              {%- for variant in product.variants -%}
+                <option value="{{ variant.id }}"{% if variant.id == current_variant.id %} selected{% endif %}{% unless variant.available %} disabled{% endunless %}>{{ variant.title | escape }}</option>
+              {%- endfor -%}
+            </select>
+            <div class="variant-options">
+              {%- for option in product.options_with_values -%}
+                {%- assign opt_index = forloop.index0 -%}
+                <fieldset class="variant-picker" data-option-index="{{ opt_index }}">
+                  <legend class="label">{{ option.name | escape }}</legend>
+                  <div class="pills">
+                    {%- assign opt_name_down = option.name | downcase -%}
+                    {%- for value in option.values -%}
+                      {%- assign swatch_img = nil -%}
+                      {%- if opt_name_down == 'color' or opt_name_down == 'colour' -%}
+                        {%- for v in product.variants -%}
+                          {%- if v.options[opt_index] == value and v.featured_image and swatch_img == nil -%}{%- assign swatch_img = v.featured_image -%}{%- endif -%}
+                        {%- endfor -%}
+                      {%- endif -%}
+                      <input type="radio" id="opt-{{ section.id }}-{{ opt_index }}-{{ forloop.index }}" name="option-{{ opt_index }}" value="{{ value | escape }}"{% if current_variant.options[opt_index] == value %} checked{% endif %}>
+                      <label for="opt-{{ section.id }}-{{ opt_index }}-{{ forloop.index }}" class="pill">{% if swatch_img %}<span class="pill-swatch">{{ swatch_img | image_url: width: 64 | image_tag: loading: 'lazy', width: 28, height: 28, alt: '' }}</span>{% endif %}{{ value | escape }}</label>
+                    {%- endfor -%}
+                  </div>
+                </fieldset>
+              {%- endfor -%}
+            </div>
+            <script type="application/json" id="variant-data">
+              [
+                {%- for variant in product.variants -%}
+                  {"id": {{ variant.id }}, "options": {{ variant.options | json }}, "available": {{ variant.available }}, "image": {{ variant.featured_image.id | default: 'null' }},
+                   "price": {% if variant.price > 0 %}{{ variant.price | money_without_trailing_zeros | json }}{% else %}""{% endif %},
+                   "compare": {% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | money_without_trailing_zeros | json }}{% else %}""{% endif %}}{% unless forloop.last %},{% endunless %}
+                {%- endfor -%}
+              ]
+            </script>
+            {%- if chart_html != blank -%}
+              <p class="small"><button class="linkbtn size-chart-btn" type="button" data-open-dialog="size-chart-dialog">Size chart</button></p>
+            {%- elsif has_size -%}
+              {%- assign size_guide_page = settings.size_guide_page | default: pages['size-guide'] -%}
+              {%- if size_guide_page.title != blank -%}<p class="small"><a href="{{ size_guide_page.url }}">{{ 'products.size_guide' | t }}</a></p>{%- endif -%}
+            {%- endif -%}
+          {%- endif -%}
+
+          {%- if can_buy -%}
+            <div class="qty-row">
+              <label class="label" for="qty-product">{{ 'products.quantity' | t }}</label>
+              <input class="qty-input" id="qty-product" type="number" name="quantity" value="1" min="1" inputmode="numeric">
+            </div>
+          {%- endif -%}
+
+          <div class="add-row">
+            {%- if can_buy -%}
+              {%- capture add_label -%}{%- if mode == 'preorder' -%}{{ 'products.preorder' | t }}{%- else -%}{{ 'products.add_to_cart' | t }}{%- endif -%}{%- endcapture -%}
+              <button class="btn btn-block" type="submit" name="add" data-add-label="{{ add_label | strip | escape }}">{{ add_label | strip }}</button>
+            {%- else -%}
+              <button class="btn btn-block" type="button" name="add" disabled>
+                {%- if product.available == false -%}{{ 'products.sold_out' | t }}{%- else -%}{{ 'products.unavailable' | t }}{%- endif -%}
+              </button>
+            {%- endif -%}
+          </div>
+          <p class="form-msg cart-error" role="alert" hidden></p>
+          <p class="form-msg cart-msg" role="status" aria-live="polite" hidden>{{ 'products.added_message' | t }} <a href="{{ routes.cart_url }}">{{ 'products.view_cart' | t }}</a></p>
+
+          {%- if can_buy and settings.dynamic_checkout and mode != 'preorder' -%}
+            {{ form | payment_button }}
+          {%- endif -%}
+        {%- endform -%}
+
+        {%- if request.design_mode and sellable == false -%}
+          <p class="small">{% render 'todo', label: 'this product cannot be bought yet: needs the custom.fiber field and, for made-to-order or preorder, the matching delivery and charge fields in theme settings' %}</p>
+        {%- endif -%}
+
+        {%- if chart_html != blank -%}
+          <dialog class="chart-dialog" id="size-chart-dialog" aria-labelledby="size-chart-title">
+            <div class="chart-head">
+              <h2 id="size-chart-title">Size chart</h2>
+              <button class="linkbtn" type="button" data-close-dialog autofocus>Close</button>
+            </div>
+            <div class="table-scroll prose">{{ chart_html }}</div>
+            <p class="small">Garment measurements in inches. <a href="{% render 'page-url', key: 'contact' %}">Ask us</a> if you are between sizes.</p>
+          </dialog>
+        {%- endif -%}
+
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when '@app' -%}
+              {% render block %}
+          {%- endcase -%}
+        {%- endfor -%}
+
+        {% render 'holiday-notice' %}
+        <p class="small">{% render 'returns-line' %} See <a href="{% render 'page-url', key: 'shipping' %}">shipping and returns</a>.</p>
+
+        <div class="product-details">
+          {%- if fiber != blank or request.design_mode -%}
+            <details open>
+              <summary class="label">{{ 'products.fiber' | t }}</summary>
+              <div><p>{% if fiber != blank %}{{ fiber | escape | newline_to_br }}{% else %}{% render 'todo', label: 'fiber content (custom.fiber), required by law for US garments' %}{% endif %}</p></div>
+            </details>
+          {%- endif -%}
+          {%- if fit != blank or request.design_mode -%}
+            <details>
+              <summary class="label">{{ 'products.fit' | t }}</summary>
+              <div><p>{% if fit != blank %}{{ fit | escape | newline_to_br }}{% else %}{% render 'todo', label: 'fit note (custom.fit)' %}{% endif %}</p></div>
+            </details>
+          {%- endif -%}
+          {%- if care != blank or request.design_mode -%}
+            <details>
+              <summary class="label">{{ 'products.care' | t }}</summary>
+              <div><p>{% if care != blank %}{{ care | escape | newline_to_br }}{% else %}{% render 'todo', label: 'care instructions (custom.care)' %}{% endif %}</p></div>
+            </details>
+          {%- endif -%}
+          <details>
+            <summary class="label">{{ 'products.shipping_returns' | t }}</summary>
+            <div><p><a href="{% render 'page-url', key: 'shipping' %}">{{ 'products.full_policy' | t }}</a></p></div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="application/ld+json">{{ product | structured_data }}</script>
+</section>
+
+{% schema %}
+{
+  "name": "Product",
+  "blocks": [
+    { "type": "@app" }
+  ]
+}
+{% endschema %}

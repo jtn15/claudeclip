@@ -1,0 +1,125 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Maison Rivault",
+    "theme_version": "3.0.0",
+    "theme_author": "Maison Rivault",
+    "theme_documentation_url": "https://maisonrivault.com",
+    "theme_support_url": "https://maisonrivault.com"
+  },
+  {
+    "name": "Brand",
+    "settings": [
+      { "type": "image_picker", "id": "logo", "label": "Logo image" },
+      { "type": "checkbox", "id": "use_logo_image", "label": "Use the logo image instead of the built-in monogram", "default": false },
+      { "type": "text", "id": "tagline", "label": "Tagline" },
+      { "type": "text", "id": "location", "label": "Location", "info": "Shown on the story page and story block." },
+      { "type": "text", "id": "established", "label": "Established (year)" },
+      { "type": "checkbox", "id": "show_established", "label": "Show \"Est.\" year", "default": true },
+      { "type": "text", "id": "instagram_handle", "label": "Instagram handle", "info": "Without the URL, for example maisonrivault" },
+      { "type": "text", "id": "contact_email", "label": "Contact email" },
+      { "type": "text", "id": "market_value_label", "label": "Comparable price label", "info": "Shown next to the crossed-out comparable price (product metafield custom.market_value).", "default": "Comparable value" }
+    ]
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      { "type": "color", "id": "color_background", "label": "Background", "default": "#F3EEE4" },
+      { "type": "color", "id": "color_stone", "label": "Panel (stone)", "default": "#EAE3D5" },
+      { "type": "color", "id": "color_text", "label": "Text", "default": "#1C1B19" },
+      { "type": "color", "id": "color_muted", "label": "Muted text", "default": "#5B564B" },
+      { "type": "color", "id": "color_hairline", "label": "Hairlines and borders", "default": "#DDD5C4" },
+      { "type": "color", "id": "color_accent", "label": "Accent (green)", "default": "#12301F" },
+      { "type": "color", "id": "color_highlight", "label": "Highlight (brass)", "default": "#CDB77F" },
+      { "type": "color", "id": "color_flag", "label": "Flag / alert", "default": "#8A3B1E" }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      { "type": "font_picker", "id": "type_header_font", "label": "Headings", "default": "cormorant_n4" },
+      { "type": "font_picker", "id": "type_body_font", "label": "Body", "default": "jost_n4" }
+    ]
+  },
+  {
+    "name": "Social and icons",
+    "settings": [
+      { "type": "image_picker", "id": "social_image", "label": "Social sharing image", "info": "1200 x 630 recommended." },
+      { "type": "image_picker", "id": "favicon", "label": "Favicon", "info": "Square PNG, 64 x 64 or larger." },
+      { "type": "image_picker", "id": "apple_touch_icon", "label": "Apple touch icon", "info": "Square, 180 x 180 or larger." }
+    ]
+  },
+  {
+    "name": "Pages",
+    "settings": [
+      { "type": "page", "id": "shipping_page", "label": "Shipping and returns page" },
+      { "type": "page", "id": "size_guide_page", "label": "Size guide page" },
+      { "type": "page", "id": "contact_page", "label": "Contact page" },
+      { "type": "page", "id": "faq_page", "label": "FAQ page" },
+      { "type": "page", "id": "story_page", "label": "Our story page" }
+    ]
+  },
+  {
+    "name": "Selling",
+    "settings": [
+      { "type": "checkbox", "id": "show_prices", "label": "Allow purchase", "info": "Prices always show. Off disables the Add to cart button.", "default": false },
+      { "type": "checkbox", "id": "dynamic_checkout", "label": "Show dynamic checkout buttons (Shop Pay, Apple Pay)", "default": false },
+      { "type": "checkbox", "id": "require_fiber", "label": "Require fiber content before a product can be bought", "default": false },
+      { "type": "number", "id": "free_shipping_threshold", "label": "Free shipping threshold", "info": "Whole currency amount. Leave blank to hide the cart progress bar." }
+    ]
+  },
+  {
+    "name": "Availability",
+    "settings": [
+      { "type": "text", "id": "in_stock_ship", "label": "In stock: ships within", "info": "For example: 2 business days" },
+      { "type": "text", "id": "made_to_order_delivery", "label": "Made to order: estimated delivery", "info": "Required for made-to-order products to be buyable." },
+      { "type": "text", "id": "preorder_ship", "label": "Preorder: expected ship date", "info": "Required for preorder products to be buyable." },
+      { "type": "textarea", "id": "preorder_policy", "label": "Preorder policy", "info": "Required for preorder products to be buyable." }
+    ]
+  },
+  {
+    "name": "Shipping",
+    "settings": [
+      { "type": "text", "id": "shipping_cost", "label": "Shipping cost summary" },
+      { "type": "text", "id": "shipping_regions", "label": "Where we ship" }
+    ]
+  },
+  {
+    "name": "Returns",
+    "settings": [
+      { "type": "text", "id": "return_days", "label": "Return window (days)" },
+      { "type": "text", "id": "return_conditions", "label": "Return conditions" },
+      { "type": "text", "id": "return_shipping", "label": "Return shipping" }
+    ]
+  },
+  {
+    "name": "Holiday notice",
+    "settings": [
+      { "type": "checkbox", "id": "holiday_notice", "label": "Show holiday delivery notice (Oct 1 to Dec 25)", "default": false },
+      { "type": "checkbox", "id": "holiday_confirmed", "label": "Cutoff date is confirmed", "info": "Off says delivery before December 25 cannot be promised.", "default": false },
+      { "type": "text", "id": "holiday_cutoff", "label": "Order cutoff date", "info": "For example: December 10" }
+    ]
+  },
+  {
+    "name": "Welcome popup",
+    "settings": [
+      { "type": "checkbox", "id": "popup_enabled", "label": "Enable welcome popup", "info": "Also requires a discount code below.", "default": false },
+      { "type": "text", "id": "popup_discount_code", "label": "Discount code", "info": "Must already exist in Shopify > Discounts." },
+      { "type": "range", "id": "popup_delay", "label": "Delay before showing (seconds)", "min": 0, "max": 60, "step": 1, "default": 8 },
+      { "type": "text", "id": "popup_offer", "label": "Offer name", "default": "Your discount" },
+      { "type": "text", "id": "popup_headline", "label": "Headline", "default": "Join the list" },
+      { "type": "textarea", "id": "popup_text", "label": "Text" },
+      { "type": "text", "id": "popup_button", "label": "Button label", "default": "Continue" },
+      { "type": "text", "id": "popup_email_note", "label": "Small print under email" },
+      { "type": "text", "id": "popup_phone_text", "label": "Phone step text" },
+      { "type": "textarea", "id": "popup_consent", "label": "Consent text" }
+    ]
+  },
+  {
+    "name": "Password page",
+    "settings": [
+      { "type": "textarea", "id": "password_message", "label": "Message" },
+      { "type": "text", "id": "password_signup_tag", "label": "Signup tag", "default": "waitlist" }
+    ]
+  }
+]

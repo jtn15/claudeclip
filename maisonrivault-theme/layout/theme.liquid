@@ -1,0 +1,60 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="{{ settings.color_background }}">
+    <script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
+    <title>{{ page_title }}{% unless page_title contains shop.name %} | {{ shop.name }}{% endunless %}</title>
+    {%- assign meta_description = page_description | default: shop.description | default: settings.tagline -%}
+    <meta name="description" content="{{ meta_description | strip_html | escape }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    <meta property="og:site_name" content="{{ shop.name | escape }}">
+    <meta property="og:url" content="{{ canonical_url }}">
+    <meta property="og:title" content="{{ page_title | escape }}">
+    <meta property="og:description" content="{{ meta_description | strip_html | escape }}">
+    <meta property="og:type" content="{% if template.name == 'product' %}product{% else %}website{% endif %}">
+    {%- assign og_image = settings.social_image -%}
+    {%- if template.name == 'product' and product.featured_image != blank -%}
+      {%- assign og_image = product.featured_image -%}
+    {%- elsif page_image != blank -%}
+      {%- assign og_image = page_image -%}
+    {%- endif -%}
+    {%- if og_image != blank -%}
+      {%- assign og_url = og_image | image_url: width: 1200 -%}
+      {%- unless og_url contains 'http' -%}{%- assign og_url = og_url | prepend: 'https:' -%}{%- endunless -%}
+      <meta property="og:image" content="{{ og_url }}">
+      <meta property="og:image:alt" content="{{ og_image.alt | default: shop.name | escape }}">
+    {%- endif -%}
+    <meta name="twitter:card" content="{% if og_image != blank %}summary_large_image{% else %}summary{% endif %}">
+
+    {% render 'theme-head' %}
+    <script src="{{ 'site.js' | asset_url }}" defer></script>
+
+    {{ content_for_header }}
+  </head>
+  <body class="template-{{ template.name | handleize }}">
+    {% render 'logo-sprite' %}
+    <a class="skip" href="#main">{{ 'general.skip_to_content' | t }}</a>
+    {% sections 'header-group' %}
+    <main id="main" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
+    {% sections 'footer-group' %}
+
+    {% unless template.name == 'cart' %}{% render 'welcome-popup' %}{% endunless %}
+
+    <script type="application/json" id="theme-strings">
+      {
+        "adding": {{ 'products.adding' | t | json }},
+        "added": {{ 'products.added' | t | json }},
+        "addedMessage": {{ 'products.added_message' | t | json }},
+        "error": {{ 'products.error_generic' | t | json }},
+        "soldOut": {{ 'products.sold_out' | t | json }},
+        "unavailable": {{ 'products.unavailable' | t | json }}
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+{%- comment -%}A place for app blocks (reviews, upsells, galleries) on any page that supports sections.{%- endcomment -%}
+<section class="apps-section">
+  <div class="wrap">
+    {%- for block in section.blocks -%}
+      {% render block %}
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Apps",
+  "blocks": [
+    { "type": "@app" }
+  ],
+  "presets": [{ "name": "Apps" }]
+}
+{% endschema %}

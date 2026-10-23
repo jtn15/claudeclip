@@ -1,0 +1,9 @@
+{%- comment -%}One product gallery photo. Params: image, n (position in the product's own photo order), product, eager{%- endcomment -%}
+{%- if image.alt != blank -%}{%- assign image_alt = image.alt -%}
+{%- elsif n == 1 -%}{%- assign image_alt = product.title -%}
+{%- else -%}{%- assign image_alt = product.title | append: ', view ' | append: n -%}{%- endif -%}
+{%- if eager -%}
+  {% render 'media-or-placeholder', media: image, alt: image_alt, eager: true, sizes: '(min-width: 64rem) 55vw, 100vw' %}
+{%- else -%}
+  {% render 'media-or-placeholder', media: image, alt: image_alt, sizes: '(min-width: 64rem) 27vw, 50vw' %}
+{%- endif -%}

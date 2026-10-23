@@ -1,0 +1,32 @@
+{%- layout none -%}
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Gift card | {{ shop.name }}</title>
+    {% render 'theme-head' %}
+    {{ content_for_header }}
+  </head>
+  <body class="template-gift-card">
+    {% render 'logo-sprite' %}
+    <main id="main" tabindex="-1">
+      <section class="page-head">
+        <div class="col center">
+          <a class="logo" href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }}">{% render 'logo-lockup', class: 'logo-lockup logo-center' %}</a>
+          <h1>Your gift card</h1>
+          <p class="gift-balance">{{ gift_card.balance | money }}</p>
+          {%- if gift_card.enabled == false or gift_card.expired -%}
+            <p class="muted" role="status">This gift card is {% if gift_card.expired %}expired{% else %}disabled{% endif %}.</p>
+          {%- endif -%}
+          <p class="label">Code</p>
+          <p class="gift-code" id="gift-card-code">{{ gift_card.code | format_code }}</p>
+          {%- if gift_card.expires_on -%}<p class="small">Expires {{ gift_card.expires_on | date: '%B %-d, %Y' }}</p>{%- endif -%}
+          <p><a class="btn" href="{{ shop.url }}">Start shopping</a></p>
+          <p class="small"><a href="#" onclick="window.print(); return false;">Print</a></p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

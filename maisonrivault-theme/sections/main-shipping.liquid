@@ -1,0 +1,45 @@
+{%- comment -%}
+  Shipping and returns. Shopify's own policies (Settings > Policies) are the source of truth and are shown in full when set,
+  so checkout and this page always give the same answer. Theme settings are only a fallback summary.
+{%- endcomment -%}
+<section class="page-head"><div class="col"><h1>{{ page.title | escape }}</h1></div></section>
+<section class="page-body">
+  <div class="col prose">
+    {%- if settings.in_stock_ship != blank or settings.made_to_order_delivery != blank or settings.preorder_ship != blank -%}
+      <h2>When your order ships</h2>
+      {%- if settings.in_stock_ship != blank -%}<p><strong>In stock:</strong> ships within {{ settings.in_stock_ship | escape }}.</p>{%- endif -%}
+      {%- if settings.made_to_order_delivery != blank -%}<p><strong>Made to order:</strong> made after you order. Estimated delivery: {{ settings.made_to_order_delivery | escape }}.</p>{%- endif -%}
+      {%- if settings.preorder_ship != blank -%}<p><strong>Preorder:</strong> not made yet. Expected to ship {{ settings.preorder_ship | escape }}. {{ settings.preorder_policy | escape }}</p>{%- endif -%}
+      <p>Each product page says which of these applies.</p>
+    {%- endif -%}
+
+    <h2>Shipping</h2>
+    {%- if shop.shipping_policy.body != blank -%}
+      {{ shop.shipping_policy.body }}
+    {%- else -%}
+      {%- if settings.shipping_cost != blank -%}<p><strong>Cost:</strong> {{ settings.shipping_cost | escape }}.</p>{%- endif -%}
+      {%- if settings.shipping_regions != blank -%}<p><strong>Where we ship:</strong> {{ settings.shipping_regions | escape }}.</p>{%- endif -%}
+      {%- if settings.shipping_cost == blank and settings.shipping_regions == blank and request.design_mode -%}<p>{% render 'todo', label: 'add a Shipping policy in Shopify (Settings > Policies)' %}</p>{%- endif -%}
+    {%- endif -%}
+    <p>Exact shipping options and costs are shown at checkout before you pay.</p>
+
+    {% render 'holiday-notice', heading: true %}
+
+    <h2>Returns</h2>
+    {%- if shop.refund_policy.body != blank -%}
+      {{ shop.refund_policy.body }}
+    {%- else -%}
+      {%- if settings.return_days != blank -%}<p><strong>Window:</strong> {{ settings.return_days | escape }} days from delivery.</p>{%- endif -%}
+      {%- if settings.return_conditions != blank -%}<p><strong>Condition:</strong> {{ settings.return_conditions | escape }}.</p>{%- endif -%}
+      {%- if settings.return_shipping != blank -%}<p><strong>Return shipping:</strong> {{ settings.return_shipping | escape }}.</p>{%- endif -%}
+      {%- if settings.return_days == blank and request.design_mode -%}<p>{% render 'todo', label: 'add a Refund policy in Shopify (Settings > Policies)' %}</p>{%- endif -%}
+    {%- endif -%}
+    <p>To start a return, <a href="{% render 'page-url', key: 'contact' %}">contact us</a> with your order number.</p>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Shipping and returns"
+}
+{% endschema %}

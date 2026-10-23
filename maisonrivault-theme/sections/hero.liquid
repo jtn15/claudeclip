@@ -1,0 +1,47 @@
+{%- comment -%}
+  Hero: the picked image, else the first product photo in the store, else a neutral panel.
+{%- endcomment -%}
+{%- assign hero_image = section.settings.image -%}
+{%- if hero_image == blank -%}
+  {%- assign hero_image = collections.all.products.first.featured_image -%}
+{%- endif -%}
+{%- assign essentials = collections['essentials'] -%}
+{%- if essentials.title != blank -%}{%- assign default_url = essentials.url -%}{%- else -%}{%- assign default_url = routes.all_products_collection_url -%}{%- endif -%}
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-copy">
+      {%- if section.settings.eyebrow != blank -%}<p class="label muted">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      <h1>{{ section.settings.heading | default: settings.tagline | default: shop.name }}</h1>
+      {%- if section.settings.text != blank -%}<p class="lede">{{ section.settings.text }}</p>{%- endif -%}
+      <div class="hero-actions">
+        {%- if section.settings.button_label != blank -%}
+          <a class="btn" href="{{ section.settings.button_url | default: default_url }}">{{ section.settings.button_label }}</a>
+        {%- endif -%}
+        {%- if section.settings.secondary_label != blank and section.settings.secondary_url != blank -%}
+          <a class="label hero-link" href="{{ section.settings.secondary_url }}">{{ section.settings.secondary_label }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+    <div class="hero-art">
+      {% render 'media-or-placeholder', media: hero_image, alt: section.settings.image_alt, caption: 'Hero photo', eager: true, sizes: '(min-width: 52rem) 40vw, 100vw' %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small label" },
+    { "type": "text", "id": "heading", "label": "Heading", "info": "Leave blank to use the tagline from theme settings." },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Menswear built to layer. Clean cuts and easy neutrals for the pieces you reach for first." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop the Essentials Collection" },
+    { "type": "url", "id": "button_url", "label": "Button link", "info": "Leave blank to link to the collection with the handle essentials, or to all products if there is none." },
+    { "type": "text", "id": "secondary_label", "label": "Second link label" },
+    { "type": "url", "id": "secondary_url", "label": "Second link" },
+    { "type": "image_picker", "id": "image", "label": "Hero photo", "info": "Leave empty to use the first product photo in the store." },
+    { "type": "text", "id": "image_alt", "label": "Photo description", "info": "Describe the photo for screen readers. Used when the image has no alt text of its own." }
+  ],
+  "presets": [{ "name": "Hero" }]
+}
+{% endschema %}

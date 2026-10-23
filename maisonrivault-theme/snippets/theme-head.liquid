@@ -1,0 +1,38 @@
+{%- comment -%}
+  Shared <head> pieces for theme.liquid, password.liquid and gift_card.liquid:
+  Shopify-hosted fonts (no third-party requests), color/type variables, favicon, stylesheet.
+  Every variable is only emitted when the setting has a value; main.css holds the same defaults,
+  so the theme looks right even before settings have ever been saved.
+{%- endcomment -%}
+{%- assign head_font = settings.type_header_font -%}
+{%- assign body_font = settings.type_body_font -%}
+{%- if body_font != blank %}<link rel="preload" as="font" type="font/woff2" href="{{ body_font | font_url: 'woff2' }}" crossorigin>{% endif %}
+{%- if head_font != blank %}<link rel="preload" as="font" type="font/woff2" href="{{ head_font | font_url: 'woff2' }}" crossorigin>{% endif %}
+<style>
+  {%- if head_font != blank %}{{ head_font | font_face: font_display: 'swap' }}{% endif %}
+  {%- if body_font != blank %}{{ body_font | font_face: font_display: 'swap' }}{% endif %}
+  @font-face { font-family: "MR Fallback Serif"; src: local("Georgia"); size-adjust: 94%; ascent-override: 92%; descent-override: 28%; }
+  @font-face { font-family: "MR Fallback Sans"; src: local("Arial"); size-adjust: 102%; ascent-override: 98%; descent-override: 26%; }
+  :root {
+    {%- if settings.color_background != blank %}--cream: {{ settings.color_background }};{% endif %}
+    {%- if settings.color_stone != blank %}--stone: {{ settings.color_stone }};{% endif %}
+    {%- if settings.color_text != blank %}--ink: {{ settings.color_text }};{% endif %}
+    {%- if settings.color_muted != blank %}--muted: {{ settings.color_muted }};{% endif %}
+    {%- if settings.color_hairline != blank %}--hairline: {{ settings.color_hairline }};{% endif %}
+    {%- if settings.color_accent != blank %}--green: {{ settings.color_accent }};{% endif %}
+    {%- if settings.color_highlight != blank %}--brass: {{ settings.color_highlight }};{% endif %}
+    {%- if settings.color_flag != blank %}--flag: {{ settings.color_flag }};{% endif %}
+    {%- if head_font != blank %}--font-head: {{ head_font.family }}, "MR Fallback Serif", {{ head_font.fallback_families }};{% endif %}
+    {%- if body_font != blank %}--font-sans: {{ body_font.family }}, "MR Fallback Sans", {{ body_font.fallback_families }}; --weight-body: {{ body_font.weight }};{% endif %}
+  }
+</style>
+{%- if settings.favicon != blank %}
+<link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 64, height: 64 }}">
+{%- else %}
+<link rel="icon" type="image/png" href="{{ 'favicon.png' | asset_url }}">
+<link rel="apple-touch-icon" href="{{ 'favicon.png' | asset_url }}">
+{%- endif %}
+{%- if settings.apple_touch_icon != blank %}
+<link rel="apple-touch-icon" href="{{ settings.apple_touch_icon | image_url: width: 180, height: 180 }}">
+{%- endif %}
+{{ 'main.css' | asset_url | stylesheet_tag }}

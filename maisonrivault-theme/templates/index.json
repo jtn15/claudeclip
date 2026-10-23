@@ -1,0 +1,105 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "eyebrow": "",
+        "heading": "",
+        "text": "Menswear built to layer. Clean cuts and easy neutrals for the pieces you reach for first.",
+        "button_label": "Shop the Essentials Collection",
+        "button_url": "",
+        "secondary_label": "",
+        "secondary_url": "",
+        "image": "shopify://shop_images/IMG_8542.png",
+        "image_alt": ""
+      }
+    },
+    "values": {
+      "type": "value-props",
+      "blocks": {
+        "a": {
+          "type": "point",
+          "settings": {
+            "title": "Size charts on every piece",
+            "text": "Garment measurements in inches and cm."
+          }
+        },
+        "b": {
+          "type": "point",
+          "settings": {
+            "title": "Fabric stated plainly",
+            "text": "Fiber content, fit and care on each page."
+          }
+        },
+        "c": {
+          "type": "point",
+          "settings": {
+            "title": "Built to layer",
+            "text": "Easy neutrals that go together."
+          }
+        }
+      },
+      "block_order": [
+        "a",
+        "b",
+        "c"
+      ],
+      "settings": {}
+    },
+    "products": {
+      "type": "collection-grid",
+      "settings": {
+        "heading": "The Essentials Collection",
+        "blurb": "",
+        "collection": "essentials",
+        "limit": 8
+      }
+    },
+    "next": {
+      "type": "next-collection",
+      "settings": {
+        "image_alt": "",
+        "eyebrow": "Next collection",
+        "heading": "The Signature Collection",
+        "status": "Coming soon",
+        "text": "A step up from the Essentials. Join the list to hear first.",
+        "show_signup": true,
+        "button": "Notify me",
+        "success": "You are on the list. We will email you when it launches.",
+        "note": "One email when it is ready. Unsubscribe any time.",
+        "tag": "next-collection"
+      }
+    },
+    "story": {
+      "type": "story-block",
+      "settings": {
+        "statement": "Maison Rivault makes menswear built to layer, in easy neutrals, at an easy price.",
+        "link": ""
+      }
+    },
+    "signup": {
+      "type": "email-signup",
+      "settings": {
+        "eyebrow": "",
+        "heading": "Join the list",
+        "text": "New pieces and restocks, straight to your inbox.",
+        "button": "Subscribe",
+        "success": "Thank you. You are on the list.",
+        "tag": ""
+      }
+    },
+    "contact": {
+      "type": "contact-teaser",
+      "settings": {}
+    }
+  },
+  "order": [
+    "hero",
+    "values",
+    "products",
+    "next",
+    "story",
+    "contact",
+    "signup"
+  ]
+}

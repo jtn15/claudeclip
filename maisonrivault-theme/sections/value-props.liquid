@@ -1,0 +1,40 @@
+{%- comment -%}A short row of promises. Only state things that are true for your store.{%- endcomment -%}
+<section class="value-props">
+  <div class="wrap value-grid">
+    {%- for block in section.blocks -%}
+      {%- if block.settings.title != blank -%}
+        <div class="value" {{ block.shopify_attributes }}>
+          <h3 class="label">{{ block.settings.title }}</h3>
+          {%- if block.settings.text != blank -%}<p class="small">{{ block.settings.text }}</p>{%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Value points",
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "point",
+      "name": "Point",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "text", "id": "text", "label": "Text" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Value points",
+      "blocks": [
+        { "type": "point", "settings": { "title": "Size charts on every piece", "text": "Garment measurements in inches and cm." } },
+        { "type": "point", "settings": { "title": "Fabric stated plainly", "text": "Fiber content, fit and care on each page." } },
+        { "type": "point", "settings": { "title": "Built to layer", "text": "Easy neutrals that go together." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

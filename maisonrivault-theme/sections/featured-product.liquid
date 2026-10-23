@@ -1,0 +1,30 @@
+{%- assign featured = section.settings.product -%}
+{%- if featured != blank -%}
+  <section class="image-text">
+    <div class="wrap image-text-grid">
+      <div class="image-text-art">
+        <a href="{{ featured.url }}" tabindex="-1" aria-hidden="true">{% render 'media-or-placeholder', media: featured.featured_image, alt: featured.title, sizes: '(min-width: 52rem) 45vw, 100vw' %}</a>
+      </div>
+      <div class="image-text-copy">
+        {%- if section.settings.eyebrow != blank -%}<p class="label muted">{{ section.settings.eyebrow }}</p>{%- endif -%}
+        <h2><a class="plain-link" href="{{ featured.url }}">{{ featured.title | escape }}</a></h2>
+        <p>{% render 'price', product: featured %}</p>
+        {%- if featured.description != blank -%}<div class="prose">{{ featured.description | strip_html | truncatewords: 40 }}</div>{%- endif -%}
+        <p><a class="btn" href="{{ featured.url }}">View</a></p>
+      </div>
+    </div>
+  </section>
+{%- elsif request.design_mode -%}
+  <section><div class="wrap"><p class="muted">Pick a product in this section.</p></div></section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Featured product",
+  "settings": [
+    { "type": "product", "id": "product", "label": "Product" },
+    { "type": "text", "id": "eyebrow", "label": "Small label" }
+  ],
+  "presets": [{ "name": "Featured product" }]
+}
+{% endschema %}

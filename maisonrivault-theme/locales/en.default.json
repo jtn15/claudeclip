@@ -1,0 +1,71 @@
+{
+  "general": {
+    "skip_to_content": "Skip to content",
+    "home": "home",
+    "cart": "Cart",
+    "menu": "Menu",
+    "close_menu": "Close menu",
+    "account": "Account",
+    "search": "Search",
+    "shop": "Shop",
+    "view_all": "View all",
+    "previous": "Previous",
+    "next": "Next",
+    "no_products": "No products here yet.",
+    "back_home": "Back to home",
+    "not_found_title": "Page not found",
+    "not_found_text": "That page does not exist. Try a search or head back to the shop."
+  },
+  "products": {
+    "add_to_cart": "Add to cart",
+    "preorder": "Pre-order",
+    "adding": "Adding...",
+    "added": "Added",
+    "added_message": "Added to your cart.",
+    "view_cart": "View cart",
+    "sold_out": "Sold out",
+    "unavailable": "Currently unavailable",
+    "size_guide": "Size guide",
+    "one_size": "One size.",
+    "choose_option": "Choose an option",
+    "quantity": "Quantity",
+    "from": "From",
+    "sale": "Sale",
+    "error_generic": "We could not add that to your cart. Please try again.",
+    "in_stock": "In stock.",
+    "ships_within": "Ships within {{ time }}.",
+    "made_to_order": "Made to order.",
+    "delivery_window": "Estimated delivery: {{ time }}.",
+    "preorder_label": "Preorder.",
+    "expected_ship": "Expected to ship {{ time }}.",
+    "fiber": "Fabric and fiber content",
+    "fit": "Fit",
+    "care": "Care",
+    "shipping_returns": "Shipping and returns",
+    "full_policy": "Full shipping and returns policy",
+    "related": "You may also like"
+  },
+  "cart": {
+    "title": "Cart",
+    "empty": "Your cart is empty.",
+    "remove": "Remove",
+    "update": "Update quantities",
+    "checkout": "Checkout",
+    "subtotal": "Subtotal",
+    "note": "Shipping and any taxes are calculated at checkout."
+  },
+  "filters": {
+    "title": "Filter",
+    "sort": "Sort by",
+    "apply": "Apply",
+    "clear": "Clear all",
+    "from": "From",
+    "to": "To"
+  },
+  "signup": {
+    "email": "Email address",
+    "button": "Subscribe",
+    "success": "Thank you. You are on the list.",
+    "note": "We email only when there is something worth saying. Unsubscribe any time."
+  }
+}

@@ -1,0 +1,15 @@
+{%- comment -%}Color dot for the custom.color metafield. Param: color{%- endcomment -%}
+{%- assign key = color | downcase -%}
+{%- case key -%}
+  {%- when 'navy' -%}{%- assign hex = '#1F2A44' -%}
+  {%- when 'camel' -%}{%- assign hex = '#B58B5A' -%}
+  {%- when 'olive' -%}{%- assign hex = '#5E6038' -%}
+  {%- when 'cream' -%}{%- assign hex = '#E8DFCB' -%}
+  {%- when 'black' -%}{%- assign hex = '#1C1B19' -%}
+  {%- when 'charcoal' -%}{%- assign hex = '#3D3D3B' -%}
+  {%- when 'grey' or 'gray' -%}{%- assign hex = '#8A8A86' -%}
+  {%- when 'white' -%}{%- assign hex = '#FAF8F3' -%}
+  {%- when 'indigo' -%}{%- assign hex = '#2E3A59' -%}
+  {%- else -%}{%- assign hex = '#DDD5C4' -%}
+{%- endcase -%}
+<span class="swatch" style="background: {{ hex }}" aria-hidden="true"></span>

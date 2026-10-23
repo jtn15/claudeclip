@@ -1,0 +1,32 @@
+<section class="page-head"><div class="wrap"><h1>{{ section.settings.title }}</h1></div></section>
+<section class="collection-body">
+  <div class="wrap">
+    {%- paginate collections by 24 -%}
+      <div class="grid">
+        {%- for collection in collections -%}
+          <div class="card">
+            <a class="card-link" href="{{ collection.url }}">
+              <div class="card-media">{% render 'media-or-placeholder', media: collection.featured_image, alt: collection.title %}</div>
+              <div class="card-meta"><h2 class="card-name">{{ collection.title | escape }}</h2></div>
+            </a>
+          </div>
+        {%- endfor -%}
+      </div>
+      {%- if paginate.pages > 1 -%}
+        <nav class="pagination label" aria-label="Pagination">
+          {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}">{{ 'general.previous' | t }}</a>{%- endif -%}
+          {%- if paginate.next -%}<a href="{{ paginate.next.url }}">{{ 'general.next' | t }}</a>{%- endif -%}
+        </nav>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection list page",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Heading", "default": "Collections" }
+  ]
+}
+{% endschema %}

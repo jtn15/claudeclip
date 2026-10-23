@@ -1,0 +1,18 @@
+{%- comment -%}
+  A photo, or a flat neutral panel until real photography exists. Customers never see placeholder text.
+  Params: media (optional), alt, eager (optional), sizes (optional), widths (optional), wide (optional 16:10 frame), caption (editor-only label)
+{%- endcomment -%}
+{%- assign img_sizes = sizes | default: '(min-width: 64rem) 22vw, 50vw' -%}
+{%- assign img_widths = widths | default: '400, 600, 800, 1100' -%}
+{%- if media != blank -%}
+  <div class="media{% if wide %} media-wide{% endif %}"{% if media.id %} data-image-id="{{ media.id }}"{% endif %}>
+  {%- assign alt_text = media.alt | default: alt -%}
+  {%- if eager -%}
+    {{ media | image_url: width: 1100 | image_tag: loading: 'eager', fetchpriority: 'high', widths: img_widths, sizes: img_sizes, alt: alt_text, class: 'photo' }}
+  {%- else -%}
+    {{ media | image_url: width: 1100 | image_tag: loading: 'lazy', widths: img_widths, sizes: img_sizes, alt: alt_text, class: 'photo' }}
+  {%- endif -%}
+  </div>
+{%- else -%}
+  <div class="media{% if wide %} media-wide{% endif %}"><div class="ph" aria-hidden="true">{% if request.design_mode and caption != blank %}<span>{{ caption }}</span>{% endif %}</div></div>
+{%- endif -%}

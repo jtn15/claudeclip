@@ -1,0 +1,38 @@
+{%- comment -%}
+  Related products via Shopify's Recommendations API (Search & Discovery can tune it).
+  The wrapper is rendered empty; site.js fetches the recommendations URL and swaps in the cards.
+{%- endcomment -%}
+<section class="related">
+  <div class="wrap js-recommendations" data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit=4&intent=related">
+    {%- if recommendations.performed -%}
+      {%- assign picks = recommendations.products -%}
+    {%- else -%}
+      {%- comment -%}Shown right away; replaced by real recommendations when the API returns any.{%- endcomment -%}
+      {%- assign picks = product.collections.first.products -%}
+      {%- if picks == blank or picks.size < 2 -%}{%- assign picks = collections.all.products -%}{%- endif -%}
+    {%- endif -%}
+    {%- if picks.size > 0 -%}
+      <div class="js-recs">
+        <div class="section-head"><h2>{{ section.settings.heading | default: 'products.related' | t }}</h2></div>
+        <div class="grid">
+          {%- assign shown = 0 -%}
+          {%- for recommended in picks -%}
+            {%- if recommended.id != product.id and shown < 4 -%}
+              {% render 'product-card', product: recommended %}
+              {%- assign shown = shown | plus: 1 -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Related products",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "You may also like" }
+  ]
+}
+{% endschema %}

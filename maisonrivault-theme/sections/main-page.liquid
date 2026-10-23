@@ -1,0 +1,10 @@
+<section class="page-head"><div class="col"><h1>{{ page.title | escape }}</h1></div></section>
+<section class="page-body">
+  <div class="col prose">{{ page.content }}</div>
+</section>
+
+{% schema %}
+{
+  "name": "Page"
+}
+{% endschema %}

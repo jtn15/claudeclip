@@ -1,0 +1,21 @@
+<article>
+  <section class="page-head">
+    <div class="col">
+      <p class="label muted"><a href="{{ blog.url }}">{{ blog.title | escape }}</a></p>
+      <h1>{{ article.title | escape }}</h1>
+      <p class="small"><time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%B %-d, %Y' }}</time>{% if article.author != blank %} &middot; {{ article.author | escape }}{% endif %}</p>
+    </div>
+  </section>
+  <section class="page-body">
+    <div class="col prose">
+      {%- if article.image -%}<div class="article-image">{% render 'media-or-placeholder', media: article.image, alt: article.title, eager: true, sizes: '40rem' %}</div>{%- endif -%}
+      {{ article.content }}
+    </div>
+  </section>
+</article>
+
+{% schema %}
+{
+  "name": "Article"
+}
+{% endschema %}

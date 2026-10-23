@@ -1,0 +1,19 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-collection",
+      "settings": {
+        "show_filters": true,
+        "grid_heading": "Essentials",
+        "show_next": true,
+        "next_heading": "Signature",
+        "next_status": "Coming soon",
+        "next_text": "A step up from the Essentials. Join the list to hear first.",
+        "next_signup": true
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

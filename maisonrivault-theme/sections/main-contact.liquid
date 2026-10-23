@@ -1,0 +1,26 @@
+<section class="page-head"><div class="col"><h1>{{ page.title | escape }}</h1></div></section>
+<section class="page-body">
+  <div class="col prose">
+    <p>Questions about an order, sizing or a return: write to
+      {% if settings.contact_email != blank %}<a href="mailto:{{ settings.contact_email | escape }}">{{ settings.contact_email | escape }}</a>{% else %}{% render 'todo', label: 'contact email (theme settings > Contact and social)' %}{% endif %}, or use the form.</p>
+    {%- form 'contact', id: 'contact-form' -%}
+      {%- if form.posted_successfully? -%}
+        <p class="form-msg" role="status">Thank you. We will reply by email.</p>
+      {%- endif -%}
+      {%- if form.errors -%}
+        <div class="form-msg form-error" role="alert">{{ form.errors | default_errors }}</div>
+      {%- endif -%}
+      <div class="field"><label class="label" for="contact-name">Name</label><input id="contact-name" type="text" name="contact[name]" autocomplete="name"></div>
+      <div class="field"><label class="label" for="contact-email">Email</label><input id="contact-email" type="email" name="contact[email]" autocomplete="email" required></div>
+      <div class="field"><label class="label" for="contact-body">Message</label><textarea id="contact-body" name="contact[body]" rows="6" required></textarea></div>
+      <button class="btn" type="submit">Send</button>
+    {%- endform -%}
+    <p class="muted">Please include your order number if you have one.</p>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Contact"
+}
+{% endschema %}
