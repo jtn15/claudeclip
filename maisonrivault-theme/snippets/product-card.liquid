@@ -16,13 +16,12 @@
       {%- endif -%}
       {%- if product.available == false -%}
         <span class="badge">{{ 'products.sold_out' | t }}</span>
-      {%- elsif product.compare_at_price > product.price -%}
-        <span class="badge badge-sale">{{ 'products.sale' | t }}</span>
       {%- endif -%}
     </div>
     <div class="card-meta">
       <div>
         <h3 class="card-name">{{ product.title }}</h3>
+        {% render 'rating-stars', product: product, small: true %}
         <div class="card-sub">
           {%- if color_pos >= 0 -%}
             <span class="card-swatches">

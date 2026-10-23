@@ -17,8 +17,7 @@
       { "type": "text", "id": "established", "label": "Established (year)" },
       { "type": "checkbox", "id": "show_established", "label": "Show \"Est.\" year", "default": true },
       { "type": "text", "id": "instagram_handle", "label": "Instagram handle", "info": "Without the URL, for example maisonrivault" },
-      { "type": "text", "id": "contact_email", "label": "Contact email" },
-      { "type": "text", "id": "market_value_label", "label": "Comparable price label", "info": "Shown next to the crossed-out comparable price (product metafield custom.market_value).", "default": "Comparable value" }
+      { "type": "text", "id": "contact_email", "label": "Contact email" }
     ]
   },
   {
@@ -71,7 +70,7 @@
   {
     "name": "Availability",
     "settings": [
-      { "type": "text", "id": "in_stock_ship", "label": "In stock: ships within", "info": "For example: 2 business days" },
+      { "type": "text", "id": "in_stock_ship", "label": "In stock: ships within", "info": "Processing time, for example: 1-2 business days. Used on the product page, cart, FAQ, footer and shipping page." },
       { "type": "text", "id": "made_to_order_delivery", "label": "Made to order: estimated delivery", "info": "Required for made-to-order products to be buyable." },
       { "type": "text", "id": "preorder_ship", "label": "Preorder: expected ship date", "info": "Required for preorder products to be buyable." },
       { "type": "textarea", "id": "preorder_policy", "label": "Preorder policy", "info": "Required for preorder products to be buyable." }
@@ -80,15 +79,19 @@
   {
     "name": "Shipping",
     "settings": [
+      { "type": "text", "id": "shipping_method", "label": "Shipping method name", "default": "Standard Shipping" },
+      { "type": "text", "id": "delivery_time", "label": "Delivery time after it ships", "info": "For example: 2-7 business days. The product page turns this and the processing time into an estimated delivery date range." },
       { "type": "text", "id": "shipping_cost", "label": "Shipping cost summary" },
-      { "type": "text", "id": "shipping_regions", "label": "Where we ship" }
+      { "type": "text", "id": "shipping_regions", "label": "Where we ship" },
+      { "type": "textarea", "id": "duties_note", "label": "Duties and taxes note", "info": "Shown in the cart above the checkout button. Leave blank to hide.", "default": "International orders may be subject to duties and taxes, which are non-refundable." }
     ]
   },
   {
     "name": "Returns",
     "settings": [
-      { "type": "text", "id": "return_days", "label": "Return window (days)" },
+      { "type": "text", "id": "return_days", "label": "Return window (days)", "info": "Number only, for example 30. Used on the product page, cart, FAQ, footer and shipping page." },
       { "type": "text", "id": "return_conditions", "label": "Return conditions" },
+      { "type": "text", "id": "exchange_note", "label": "Exchanges", "info": "For example: Size exchanges are free. We cover shipping both ways." },
       { "type": "text", "id": "return_shipping", "label": "Return shipping" }
     ]
   },

@@ -29,7 +29,7 @@
       {%- endfor -%}
     </div>
     <div class="footer-base">
-      <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {% render 'returns-line' %} <a href="{% render 'page-url', key: 'shipping' %}">Shipping and returns</a></p>
+      <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {% render 'policy-text', part: 'returns' %} {% render 'policy-text', part: 'shipping' %} <a href="{% render 'page-url', key: 'shipping' %}">Shipping and returns</a></p>
       {%- if settings.show_established and settings.established != blank -%}<p>Est. {{ settings.established | escape }}</p>{%- endif -%}
     </div>
   </div>

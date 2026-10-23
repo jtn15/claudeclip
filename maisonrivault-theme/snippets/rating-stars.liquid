@@ -1,0 +1,19 @@
+{%- comment -%}
+  Star rating from Shopify's standard review metafields (reviews.rating, reviews.rating_count).
+  Review apps such as Judge.me write these when installed; until then this renders nothing.
+  Never shows a rating that did not come from a real review app, and adds no structured data of its own.
+  Params: product, small (optional, for product cards)
+{%- endcomment -%}
+{%- assign rating = product.metafields.reviews.rating.value -%}
+{%- assign rating_count = product.metafields.reviews.rating_count.value | plus: 0 -%}
+{%- if rating != blank and rating_count > 0 -%}
+  {%- assign rating_value = rating.rating | plus: 0 -%}
+  {%- assign rating_max = rating.scale_max | plus: 0 -%}
+  {%- if rating_max == 0 -%}{%- assign rating_max = 5 -%}{%- endif -%}
+  {%- assign rating_pct = rating_value | times: 100 | divided_by: rating_max | round: 1 -%}
+  {%- assign rating_label = rating_value | round: 1 -%}
+  <p class="rating{% if small %} rating-small{% endif %}">
+    <span class="rating-stars" style="--rating: {{ rating_pct }}%;" role="img" aria-label="{{ 'products.rating' | t: rating: rating_label, max: rating_max }}"></span>
+    <span class="rating-count">{{ 'products.reviews_count' | t: count: rating_count }}</span>
+  </p>
+{%- endif -%}

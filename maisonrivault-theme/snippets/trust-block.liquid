@@ -1,0 +1,49 @@
+{%- comment -%}
+  Under the Add to cart button: secure checkout + the payment types enabled in Shopify Payments / checkout,
+  the return window linking to the shipping and returns page, and an estimated delivery range.
+  The range is processing time + delivery time from theme settings (for example "1-2 business days" + "2-7 business days").
+  site.js turns it into dates (weekends skipped); without JavaScript the business-day range shows instead.
+  Param: mode (in_stock | made_to_order | preorder). The delivery estimate is shown for in-stock items only.
+{%- endcomment -%}
+{%- liquid
+  assign est_min = 0
+  assign est_max = 0
+  if mode != 'made_to_order' and mode != 'preorder' and settings.in_stock_ship != blank and settings.delivery_time != blank
+    assign ship_parts = settings.in_stock_ship | split: '-'
+    assign ship_min = ship_parts.first | strip | split: ' ' | first | plus: 0
+    assign ship_max = ship_parts.last | strip | split: ' ' | first | plus: 0
+    assign del_parts = settings.delivery_time | split: '-'
+    assign del_min = del_parts.first | strip | split: ' ' | first | plus: 0
+    assign del_max = del_parts.last | strip | split: ' ' | first | plus: 0
+    if ship_min > 0 and ship_max >= ship_min and del_min > 0 and del_max >= del_min
+      assign est_min = ship_min | plus: del_min
+      assign est_max = ship_max | plus: del_max
+    endif
+  endif
+-%}
+<div class="trust">
+  <p class="trust-line">
+    <svg class="trust-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+    <span>{{ 'products.secure_checkout' | t }}</span>
+  </p>
+  {%- if shop.enabled_payment_types.size > 0 -%}
+    <ul class="pay-icons" aria-label="{{ 'products.accepted_payments' | t }}">
+      {%- for type in shop.enabled_payment_types -%}
+        <li>{{ type | payment_type_svg_tag: class: 'pay-icon' }}</li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+  {%- if settings.return_days != blank -%}
+    <p class="trust-line">
+      <svg class="trust-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 9h12a4 4 0 0 1 0 8h-3"/><path d="M8 5L4 9l4 4"/></svg>
+      <span><a href="{% render 'page-url', key: 'shipping' %}">{% render 'policy-text', part: 'returns_short' %}</a>{% if settings.exchange_note != blank %}. {% render 'policy-text', part: 'exchanges' %}{% endif %}</span>
+    </p>
+  {%- endif -%}
+  {%- if est_max > 0 -%}
+    {%- capture est_days -%}{{ 'products.business_days' | t: min: est_min, max: est_max }}{%- endcapture -%}
+    <p class="trust-line">
+      <svg class="trust-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.5"/><circle cx="17" cy="17.5" r="1.5"/></svg>
+      <span data-delivery-estimate data-min="{{ est_min }}" data-max="{{ est_max }}" data-template="{{ 'products.delivery_estimate' | t: range: '%range%' | escape }}">{{ 'products.delivery_estimate' | t: range: est_days }}</span>
+    </p>
+  {%- endif -%}
+</div>

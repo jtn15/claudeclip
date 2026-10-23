@@ -42,6 +42,11 @@
         {%- endfor -%}
         <div class="cart-total"><span>{{ 'cart.subtotal' | t }}</span><span class="price">{{ cart.total_price | money_without_trailing_zeros }}</span></div>
         <p class="small">{{ 'cart.note' | t }}</p>
+        <div class="cart-policies small">
+          <p>{% render 'policy-text', part: 'shipping' %}</p>
+          <p>{% render 'policy-text', part: 'returns' %} {% render 'policy-text', part: 'exchanges' %} <a href="{% render 'page-url', key: 'shipping' %}">{{ 'products.shipping_returns' | t }}</a></p>
+          {%- if settings.duties_note != blank -%}<p>{% render 'policy-text', part: 'duties' %}</p>{%- endif -%}
+        </div>
         <button class="btn btn-quiet btn-block cart-update" type="submit" name="update">{{ 'cart.update' | t }}</button>
         <button class="btn btn-block" type="submit" name="checkout">{{ 'cart.checkout' | t }}</button>
         {%- if additional_checkout_buttons -%}

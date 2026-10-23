@@ -67,7 +67,8 @@
         "button": "Notify me",
         "success": "You are on the list. We will email you when it launches.",
         "note": "One email when it is ready. Unsubscribe any time.",
-        "tag": "next-collection"
+        "tag": "next-collection",
+        "show_section": false
       }
     },
     "story": {

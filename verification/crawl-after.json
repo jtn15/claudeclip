@@ -1,0 +1,396 @@
+{
+ "static_translation_keys": {
+  "checked": 64,
+  "missing": [],
+  "non_literal_t_calls": []
+ },
+ "pages": {
+  "/": {
+   "status": 200,
+   "translation_missing": []
+  },
+  "/products/the-ashby-quarter-zip": {
+   "status": 200,
+   "translation_missing": []
+  },
+  "/pages/faq": {
+   "status": 200,
+   "translation_missing": []
+  },
+  "/cart": {
+   "status": 200,
+   "translation_missing": []
+  },
+  "/collections/all": {
+   "status": 200,
+   "translation_missing": []
+  },
+  "/pages/contact": {
+   "status": 200,
+   "translation_missing": []
+  },
+  "/pages/size-guide": {
+   "status": 200,
+   "translation_missing": []
+  },
+  "/pages/our-story": {
+   "status": 200,
+   "translation_missing": []
+  },
+  "/pages/shipping-returns": {
+   "status": 200,
+   "translation_missing": []
+  },
+  "/search": {
+   "status": 200,
+   "translation_missing": []
+  }
+ },
+ "links": {
+  "/": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/products/the-ashby-quarter-zip",
+    "/pages/faq",
+    "/cart",
+    "/collections/all",
+    "/pages/contact",
+    "/pages/size-guide",
+    "/pages/our-story",
+    "/pages/shipping-returns",
+    "/search"
+   ]
+  },
+  "/collections/all": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/products/the-ashby-quarter-zip",
+    "/pages/faq",
+    "/cart",
+    "/collections/all",
+    "/pages/contact",
+    "/pages/size-guide",
+    "/pages/our-story",
+    "/pages/shipping-returns",
+    "/search"
+   ]
+  },
+  "/pages/our-story": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/products/the-ashby-quarter-zip",
+    "/pages/faq",
+    "/cart",
+    "/collections/all",
+    "/pages/contact",
+    "/pages/size-guide",
+    "/pages/our-story",
+    "/pages/shipping-returns",
+    "/search"
+   ]
+  },
+  "/pages/contact": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/products/the-ashby-quarter-zip",
+    "/pages/faq",
+    "/cart",
+    "/collections/all",
+    "/pages/contact",
+    "/pages/size-guide",
+    "/pages/our-story",
+    "/pages/shipping-returns",
+    "/search"
+   ]
+  },
+  "/search": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/products/the-ashby-quarter-zip",
+    "/pages/faq",
+    "/cart",
+    "/collections/all",
+    "/pages/contact",
+    "/pages/size-guide",
+    "/pages/our-story",
+    "/pages/shipping-returns",
+    "/search"
+   ]
+  },
+  "/cart": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/products/the-ashby-quarter-zip",
+    "/pages/faq",
+    "/cart",
+    "/collections/all",
+    "/pages/contact",
+    "/pages/size-guide",
+    "/pages/our-story",
+    "/pages/shipping-returns",
+    "/search"
+   ]
+  },
+  "/collections/essentials": {
+   "status": 200,
+   "found_on": [
+    "/"
+   ]
+  },
+  "/products/the-ashby-quarter-zip": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/cart",
+    "/collections/all"
+   ]
+  },
+  "/products/the-beaumont-polo": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/products/the-ashby-quarter-zip",
+    "/cart",
+    "/collections/all"
+   ]
+  },
+  "/products/the-carrington-jeans": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/products/the-ashby-quarter-zip",
+    "/collections/all"
+   ]
+  },
+  "/products/the-hartwell-half-zip": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/products/the-ashby-quarter-zip",
+    "/collections/all"
+   ]
+  },
+  "/products/the-hollis-knit-tee": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/products/the-ashby-quarter-zip",
+    "/collections/all"
+   ]
+  },
+  "/products/the-lockhart-jacket": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/collections/all"
+   ]
+  },
+  "/products/the-sinclair-pullover": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/collections/all"
+   ]
+  },
+  "/products/the-whitlock-cardigan": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/collections/all"
+   ]
+  },
+  "/pages/shipping-returns": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/products/the-ashby-quarter-zip",
+    "/pages/faq",
+    "/cart",
+    "/collections/all",
+    "/pages/contact",
+    "/pages/size-guide",
+    "/pages/our-story",
+    "/pages/shipping-returns",
+    "/search"
+   ]
+  },
+  "/pages/size-guide": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/products/the-ashby-quarter-zip",
+    "/pages/faq",
+    "/cart",
+    "/collections/all",
+    "/pages/contact",
+    "/pages/size-guide",
+    "/pages/our-story",
+    "/pages/shipping-returns",
+    "/search"
+   ]
+  },
+  "/pages/faq": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/products/the-ashby-quarter-zip",
+    "/pages/faq",
+    "/cart",
+    "/collections/all",
+    "/pages/contact",
+    "/pages/size-guide",
+    "/pages/our-story",
+    "/pages/shipping-returns",
+    "/search"
+   ]
+  },
+  "/policies/refund-policy": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/products/the-ashby-quarter-zip",
+    "/pages/faq",
+    "/cart",
+    "/collections/all",
+    "/pages/contact",
+    "/pages/size-guide",
+    "/pages/our-story",
+    "/pages/shipping-returns",
+    "/search"
+   ]
+  },
+  "/policies/privacy-policy": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/products/the-ashby-quarter-zip",
+    "/pages/faq",
+    "/cart",
+    "/collections/all",
+    "/pages/contact",
+    "/pages/size-guide",
+    "/pages/our-story",
+    "/pages/shipping-returns",
+    "/search"
+   ]
+  },
+  "/policies/terms-of-service": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/products/the-ashby-quarter-zip",
+    "/pages/faq",
+    "/cart",
+    "/collections/all",
+    "/pages/contact",
+    "/pages/size-guide",
+    "/pages/our-story",
+    "/pages/shipping-returns",
+    "/search"
+   ]
+  },
+  "/policies/shipping-policy": {
+   "status": 200,
+   "found_on": [
+    "/",
+    "/products/the-ashby-quarter-zip",
+    "/pages/faq",
+    "/cart",
+    "/collections/all",
+    "/pages/contact",
+    "/pages/size-guide",
+    "/pages/our-story",
+    "/pages/shipping-returns",
+    "/search"
+   ]
+  },
+  "/discount/RIVAULT10": {
+   "status": 404,
+   "found_on": [
+    "/",
+    "/products/the-ashby-quarter-zip",
+    "/pages/faq",
+    "/collections/all",
+    "/pages/contact",
+    "/pages/size-guide",
+    "/pages/our-story",
+    "/pages/shipping-returns",
+    "/search"
+   ]
+  },
+  "/cart/change?line=1&quantity=0": {
+   "status": 404,
+   "found_on": [
+    "/cart"
+   ]
+  },
+  "/cart/change?line=2&quantity=0": {
+   "status": 404,
+   "found_on": [
+    "/cart"
+   ]
+  }
+ },
+ "console": {
+  "/": [],
+  "/products/the-ashby-quarter-zip": [
+   "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "/pages/faq": [],
+  "/cart": [],
+  "/collections/all": [],
+  "/pages/contact": [],
+  "/pages/size-guide": [],
+  "/pages/our-story": [],
+  "/pages/shipping-returns": [],
+  "/search": []
+ },
+ "wording": {
+  "/products/the-ashby-quarter-zip": {
+   "returns": true,
+   "returns_full": true,
+   "shipping": true,
+   "old_14_days": false,
+   "old_5_7": false,
+   "comparable": false
+  },
+  "/cart": {
+   "returns": true,
+   "returns_full": false,
+   "shipping": true,
+   "old_14_days": false,
+   "old_5_7": false,
+   "comparable": false
+  },
+  "/pages/faq": {
+   "returns": true,
+   "returns_full": true,
+   "shipping": true,
+   "old_14_days": false,
+   "old_5_7": false,
+   "comparable": false
+  },
+  "/pages/shipping-returns": {
+   "returns": true,
+   "returns_full": true,
+   "shipping": true,
+   "old_14_days": false,
+   "old_5_7": false,
+   "comparable": false
+  },
+  "/": {
+   "returns": true,
+   "returns_full": false,
+   "shipping": true,
+   "old_14_days": false,
+   "old_5_7": false,
+   "comparable": false
+  }
+ }
+}

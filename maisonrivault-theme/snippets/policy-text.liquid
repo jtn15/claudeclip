@@ -1,0 +1,59 @@
+{%- comment -%}
+  The one place return and shipping wording is written. Every page (product, cart, FAQ, footer, shipping page)
+  renders it from here, built from theme settings > Availability, Shipping and Returns, so they can never disagree.
+  Param: part
+    returns        "Returns: 30 days."
+    returns_short  "30-day returns"
+    returns_full   window + conditions + exchanges, for the FAQ and shipping page
+    exchanges      "Size exchanges are free. We cover shipping both ways."
+    shipping       "Standard Shipping: ships in 1-2 business days, then arrives in 2-7 business days."
+    duties         duties and taxes note
+  Prints nothing customer-facing for a part whose settings are blank (an editor-only marker instead).
+{%- endcomment -%}
+{%- liquid
+  assign days = settings.return_days | strip
+  assign method = settings.shipping_method | strip | default: 'Shipping'
+  comment
+    Settings may or may not end with a period; drop only a trailing one so sentences join cleanly.
+  endcomment
+  assign ship = settings.in_stock_ship | strip
+  if ship != blank and ship contains '.'
+    assign ship_end = ship | slice: -1
+    if ship_end == '.'
+      assign ship_len = ship.size | minus: 1
+      assign ship = ship | slice: 0, ship_len
+    endif
+  endif
+  assign deliver = settings.delivery_time | strip
+  if deliver != blank and deliver contains '.'
+    assign deliver_end = deliver | slice: -1
+    if deliver_end == '.'
+      assign deliver_len = deliver.size | minus: 1
+      assign deliver = deliver | slice: 0, deliver_len
+    endif
+  endif
+  assign conditions = settings.return_conditions | strip
+  if conditions != blank and conditions contains '.'
+    assign conditions_end = conditions | slice: -1
+    if conditions_end == '.'
+      assign conditions_len = conditions.size | minus: 1
+      assign conditions = conditions | slice: 0, conditions_len
+    endif
+  endif
+-%}
+{%- case part -%}
+  {%- when 'returns' -%}
+    {%- if days != blank -%}Returns: {{ days | escape }} days.{%- else -%}{% render 'todo', label: 'return window (theme settings > Returns)' %}{%- endif -%}
+  {%- when 'returns_short' -%}
+    {%- if days != blank -%}{{ days | escape }}-day returns{%- else -%}{% render 'todo', label: 'return window (theme settings > Returns)' %}{%- endif -%}
+  {%- when 'returns_full' -%}
+    {%- if days != blank -%}Returns are accepted within {{ days | escape }} days of delivery.{% if conditions != blank %} {{ conditions | escape }}.{% endif %}{% if settings.exchange_note != blank %} {{ settings.exchange_note | escape }}{% endif %}{%- else -%}{% render 'todo', label: 'return window (theme settings > Returns)' %}{%- endif -%}
+  {%- when 'exchanges' -%}
+    {{- settings.exchange_note | escape -}}
+  {%- when 'shipping' -%}
+    {%- if ship != blank and deliver != blank -%}{{ method | escape }}: ships in {{ ship | escape }}, then arrives in {{ deliver | escape }}.
+    {%- elsif ship != blank -%}{{ method | escape }}: ships in {{ ship | escape }}.
+    {%- else -%}{% render 'todo', label: 'processing and delivery time (theme settings > Availability and Shipping)' %}{%- endif -%}
+  {%- when 'duties' -%}
+    {{- settings.duties_note | escape -}}
+{%- endcase -%}

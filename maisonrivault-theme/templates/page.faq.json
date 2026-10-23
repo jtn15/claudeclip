@@ -21,7 +21,8 @@
           "type": "question",
           "settings": {
             "question": "What is your return policy?",
-            "answer": "<p>See the shipping and returns page, linked in the footer and on every product page.</p>"
+            "source": "returns",
+            "answer": "<p>To start a return or exchange, email us with your order number and we will send a return authorization and the return address. Full details are on the <a href=\"/pages/shipping-returns\" title=\"Shipping and returns\">shipping and returns page</a>.</p>"
           }
         },
         "q3": {
@@ -35,7 +36,8 @@
           "type": "question",
           "settings": {
             "question": "How long does shipping take?",
-            "answer": "<p>Orders are packed within a few business days. Delivery times and rates are listed on the shipping and returns page.</p>"
+            "source": "shipping",
+            "answer": "<p>Full details are on the <a href=\"/pages/shipping-returns\" title=\"Shipping and returns\">shipping and returns page</a>.</p>"
           }
         },
         "q5": {

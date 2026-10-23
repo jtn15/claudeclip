@@ -1,13 +1,23 @@
 {%- comment -%}
-  Shipping and returns. Shopify's own policies (Settings > Policies) are the source of truth and are shown in full when set,
-  so checkout and this page always give the same answer. Theme settings are only a fallback summary.
+  Shipping and returns. Opens with the shared summary (snippets/policy-text.liquid), the same wording as the product page,
+  cart, FAQ and footer. Then:
+  - the page's own text, when the page has content (Online Store > Pages > Shipping and returns), or
+  - otherwise the fallback below: delivery windows from theme settings plus Shopify's own policies (Settings > Policies).
 {%- endcomment -%}
 <section class="page-head"><div class="col"><h1>{{ page.title | escape }}</h1></div></section>
 <section class="page-body">
   <div class="col prose">
-    {%- if settings.in_stock_ship != blank or settings.made_to_order_delivery != blank or settings.preorder_ship != blank -%}
-      <h2>When your order ships</h2>
-      {%- if settings.in_stock_ship != blank -%}<p><strong>In stock:</strong> ships within {{ settings.in_stock_ship | escape }}.</p>{%- endif -%}
+    <h2>At a glance</h2>
+    <ul>
+      <li>{% render 'policy-text', part: 'shipping' %}</li>
+      <li>{% render 'policy-text', part: 'returns_full' %}</li>
+      {%- if settings.duties_note != blank -%}<li>{% render 'policy-text', part: 'duties' %}</li>{%- endif -%}
+    </ul>
+    {%- if page.content != blank -%}
+      {{ page.content }}
+    {%- else -%}
+    {%- if settings.made_to_order_delivery != blank or settings.preorder_ship != blank -%}
+      <h2>Made to order and preorder</h2>
       {%- if settings.made_to_order_delivery != blank -%}<p><strong>Made to order:</strong> made after you order. Estimated delivery: {{ settings.made_to_order_delivery | escape }}.</p>{%- endif -%}
       {%- if settings.preorder_ship != blank -%}<p><strong>Preorder:</strong> not made yet. Expected to ship {{ settings.preorder_ship | escape }}. {{ settings.preorder_policy | escape }}</p>{%- endif -%}
       <p>Each product page says which of these applies.</p>
@@ -22,6 +32,7 @@
       {%- if settings.shipping_cost == blank and settings.shipping_regions == blank and request.design_mode -%}<p>{% render 'todo', label: 'add a Shipping policy in Shopify (Settings > Policies)' %}</p>{%- endif -%}
     {%- endif -%}
     <p>Exact shipping options and costs are shown at checkout before you pay.</p>
+    {%- if settings.duties_note != blank -%}<p>{% render 'policy-text', part: 'duties' %}</p>{%- endif -%}
 
     {% render 'holiday-notice', heading: true %}
 
@@ -29,12 +40,16 @@
     {%- if shop.refund_policy.body != blank -%}
       {{ shop.refund_policy.body }}
     {%- else -%}
-      {%- if settings.return_days != blank -%}<p><strong>Window:</strong> {{ settings.return_days | escape }} days from delivery.</p>{%- endif -%}
-      {%- if settings.return_conditions != blank -%}<p><strong>Condition:</strong> {{ settings.return_conditions | escape }}.</p>{%- endif -%}
-      {%- if settings.return_shipping != blank -%}<p><strong>Return shipping:</strong> {{ settings.return_shipping | escape }}.</p>{%- endif -%}
+      {%- if settings.return_days != blank -%}<p>{% render 'policy-text', part: 'returns_full' %}</p>{%- endif -%}
+      {%- if settings.return_shipping != blank -%}
+        {%- assign return_shipping = settings.return_shipping | strip -%}
+        {%- assign return_shipping_end = return_shipping | slice: -1 -%}
+        <p><strong>Return shipping:</strong> {{ return_shipping | escape }}{% unless return_shipping_end == '.' %}.{% endunless %}</p>
+      {%- endif -%}
       {%- if settings.return_days == blank and request.design_mode -%}<p>{% render 'todo', label: 'add a Refund policy in Shopify (Settings > Policies)' %}</p>{%- endif -%}
     {%- endif -%}
     <p>To start a return, <a href="{% render 'page-url', key: 'contact' %}">contact us</a> with your order number.</p>
+    {%- endif -%}
   </div>
 </section>
 

@@ -2,11 +2,18 @@
 <section class="page-body">
   <div class="col">
     {%- for block in section.blocks -%}
-      {%- if block.settings.answer != blank or request.design_mode -%}
+      {%- assign source = block.settings.source | default: 'custom' -%}
+      {%- if block.settings.answer != blank or source != 'custom' or request.design_mode -%}
         <details {{ block.shopify_attributes }}>
           <summary>{{ block.settings.question }}</summary>
           <div>
-            {%- if block.settings.answer != blank -%}{{ block.settings.answer }}{%- else -%}{%- assign missing_label = 'answer to: ' | append: block.settings.question -%}<p>{% render 'todo', label: missing_label %}</p>{%- endif -%}
+            {%- if source == 'returns' -%}
+              <p>{% render 'policy-text', part: 'returns_full' %}</p>
+              {{ block.settings.answer }}
+            {%- elsif source == 'shipping' -%}
+              <p>{% render 'policy-text', part: 'shipping' %}{% if settings.duties_note != blank %} {% render 'policy-text', part: 'duties' %}{% endif %}</p>
+              {{ block.settings.answer }}
+            {%- elsif block.settings.answer != blank -%}{{ block.settings.answer }}{%- else -%}{%- assign missing_label = 'answer to: ' | append: block.settings.question -%}<p>{% render 'todo', label: missing_label %}</p>{%- endif -%}
           </div>
         </details>
       {%- endif -%}
@@ -23,6 +30,14 @@
       "name": "Question",
       "settings": [
         { "type": "text", "id": "question", "label": "Question", "default": "Question" },
+        {
+          "type": "select", "id": "source", "label": "Answer from", "default": "custom",
+          "options": [
+            { "value": "custom", "label": "Text below" },
+            { "value": "returns", "label": "Return wording (theme settings > Returns), then text below" },
+            { "value": "shipping", "label": "Shipping wording (theme settings > Availability and Shipping), then text below" }
+          ]
+        },
         { "type": "richtext", "id": "answer", "label": "Answer", "info": "Questions without an answer are hidden from customers." }
       ]
     }

@@ -3,6 +3,8 @@
   so nothing here is bundle-specific.
 
   Metafields (namespace custom): availability, color, tier, fiber, fit, care. See README.md.
+  Fit notes (snippets/fit-notes.liquid): model_height, model_size_worn, country_of_manufacture, shrinkage_note.
+  Star rating (snippets/rating-stars.liquid): reviews.rating and reviews.rating_count, written by a reviews app.
   A product can only be bought when: it is in stock, prices are shown, fiber content is filled in (if required),
   and, for made-to-order / preorder, the delivery window and charge terms are set in theme settings.
 {%- endcomment -%}
@@ -97,6 +99,23 @@
           {% render 'media-or-placeholder', alt: product.title, caption: product.title %}
         {%- endif -%}
         </div>
+        {%- if product.images.size > 1 -%}
+          {%- comment -%}
+            Thumbnails get their own small, non-lazy image URLs here. They used to be built in site.js by copying each
+            slide's image while most slides were still lazy-loading, which is the likely cause of the blank strip on mobile.
+            Same order as the slides above. Hidden until site.js wires up the carousel.
+          {%- endcomment -%}
+          <div class="gallery-thumbs" data-gallery-thumbs hidden>
+            {%- if lead_id != blank -%}
+              {%- for image in product.images -%}
+                {%- if image.id == lead_id -%}<button class="gallery-thumb" type="button">{{ image | image_url: width: 160, height: 160, crop: 'center' | image_tag: width: 68, height: 68, alt: '' }}</button>{%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+            {%- for image in product.images limit: 12 -%}
+              {%- unless image.id == lead_id -%}<button class="gallery-thumb" type="button">{{ image | image_url: width: 160, height: 160, crop: 'center' | image_tag: width: 68, height: 68, alt: '' }}</button>{%- endunless -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
       </div>
 
       <div class="product-info">
@@ -104,6 +123,7 @@
           <p class="label muted">{{ tier | default: product.type }}</p>
         {%- endif -%}
         <h1>{{ product.title }}</h1>
+        {% render 'rating-stars', product: product %}
         <p class="js-price" data-price-wrap>{% render 'price', product: product, variant: current_variant %}</p>
         {%- if color != blank -%}
           <p class="card-sub">{% render 'swatch', color: color %}{{ color }}</p>
@@ -153,8 +173,7 @@
               [
                 {%- for variant in product.variants -%}
                   {"id": {{ variant.id }}, "options": {{ variant.options | json }}, "available": {{ variant.available }}, "image": {{ variant.featured_image.id | default: 'null' }},
-                   "price": {% if variant.price > 0 %}{{ variant.price | money_without_trailing_zeros | json }}{% else %}""{% endif %},
-                   "compare": {% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | money_without_trailing_zeros | json }}{% else %}""{% endif %}}{% unless forloop.last %},{% endunless %}
+                   "price": {% if variant.price > 0 %}{{ variant.price | money_without_trailing_zeros | json }}{% else %}""{% endif %}}{% unless forloop.last %},{% endunless %}
                 {%- endfor -%}
               ]
             </script>
@@ -165,6 +184,7 @@
               {%- if size_guide_page.title != blank -%}<p class="small"><a href="{{ size_guide_page.url }}">{{ 'products.size_guide' | t }}</a></p>{%- endif -%}
             {%- endif -%}
           {%- endif -%}
+          {% render 'fit-notes', product: product %}
 
           {%- if can_buy -%}
             <div class="qty-row">
@@ -191,6 +211,8 @@
           {%- endif -%}
         {%- endform -%}
 
+        {% render 'trust-block', mode: mode %}
+
         {%- if request.design_mode and sellable == false -%}
           <p class="small">{% render 'todo', label: 'this product cannot be bought yet: needs the custom.fiber field and, for made-to-order or preorder, the matching delivery and charge fields in theme settings' %}</p>
         {%- endif -%}
@@ -214,7 +236,6 @@
         {%- endfor -%}
 
         {% render 'holiday-notice' %}
-        <p class="small">{% render 'returns-line' %} See <a href="{% render 'page-url', key: 'shipping' %}">shipping and returns</a>.</p>
 
         <div class="product-details">
           {%- if fiber != blank or request.design_mode -%}
@@ -237,12 +258,29 @@
           {%- endif -%}
           <details>
             <summary class="label">{{ 'products.shipping_returns' | t }}</summary>
-            <div><p><a href="{% render 'page-url', key: 'shipping' %}">{{ 'products.full_policy' | t }}</a></p></div>
+            <div>
+              <p>{% render 'policy-text', part: 'shipping' %}</p>
+              <p>{% render 'policy-text', part: 'returns_full' %}</p>
+              <p><a href="{% render 'page-url', key: 'shipping' %}">{{ 'products.full_policy' | t }}</a></p>
+            </div>
           </details>
         </div>
       </div>
     </div>
   </div>
+  {%- if can_buy -%}
+    {%- comment -%}
+      Mobile only. Appears once the real Add to cart button has scrolled off the top of the screen (site.js),
+      so it never covers the title, price or options. It presses the real button, so labels and sold-out state stay in sync.
+    {%- endcomment -%}
+    <div class="sticky-atc" data-sticky-atc hidden>
+      <div class="sticky-atc-text">
+        <span class="sticky-atc-title">{{ product.title | escape }}</span>
+        {%- if current_variant.price > 0 -%}<span class="sticky-atc-price" data-sticky-price>{{ current_variant.price | money_without_trailing_zeros }}</span>{%- endif -%}
+      </div>
+      <button class="btn" type="button" data-sticky-add>{%- if mode == 'preorder' -%}{{ 'products.preorder' | t }}{%- else -%}{{ 'products.add_to_cart' | t }}{%- endif -%}</button>
+    </div>
+  {%- endif -%}
   <script type="application/ld+json">{{ product | structured_data }}</script>
 </section>
 

@@ -1,3 +1,5 @@
+{%- comment -%}Hidden unless "Show this section" is ticked in the theme editor. The separate Email signup section is unaffected.{%- endcomment -%}
+{%- if section.settings.show_section -%}
 <section class="image-text next-collection" id="next-{{ section.id }}">
   <div class="wrap image-text-grid">
     <div class="image-text-art">
@@ -19,10 +21,13 @@
   </div>
 </section>
 
+{%- endif -%}
+
 {% schema %}
 {
   "name": "Next collection",
   "settings": [
+    { "type": "checkbox", "id": "show_section", "label": "Show this section", "default": false, "info": "Off hides the whole section from customers. Turn on when there is a launch you can stand behind." },
     { "type": "image_picker", "id": "image", "label": "Image", "info": "Optional. Leave empty to show the monogram." },
     { "type": "text", "id": "image_alt", "label": "Image description" },
     { "type": "text", "id": "eyebrow", "label": "Small label", "default": "Next collection" },

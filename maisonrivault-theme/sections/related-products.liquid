@@ -13,7 +13,7 @@
     {%- endif -%}
     {%- if picks.size > 0 -%}
       <div class="js-recs">
-        <div class="section-head"><h2>{{ section.settings.heading | default: 'products.related' | t }}</h2></div>
+        <div class="section-head"><h2>{%- if section.settings.heading != blank -%}{{ section.settings.heading | escape }}{%- else -%}{{ 'products.related' | t }}{%- endif -%}</h2></div>
         <div class="grid">
           {%- assign shown = 0 -%}
           {%- for recommended in picks -%}

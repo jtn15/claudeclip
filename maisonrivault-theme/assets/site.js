@@ -122,6 +122,24 @@
     f.addEventListener('change', function () { f.submit(); });
   });
 
+  /* ---------- Estimated delivery dates: today + N business days (weekends skipped) ---------- */
+  document.querySelectorAll('[data-delivery-estimate]').forEach(function (node) {
+    var min = parseInt(node.getAttribute('data-min'), 10);
+    var max = parseInt(node.getAttribute('data-max'), 10);
+    var tpl = node.getAttribute('data-template');
+    if (!(min > 0) || !(max >= min) || !tpl || !window.Intl) { return; }
+    var addBusinessDays = function (n) {
+      var d = new Date();
+      while (n > 0) { d.setDate(d.getDate() + 1); if (d.getDay() !== 0 && d.getDay() !== 6) { n--; } }
+      return d;
+    };
+    try {
+      var fmt = new Intl.DateTimeFormat(document.documentElement.lang || undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+      var day = function (n) { return fmt.format(addBusinessDays(n)).replace(/ /g, '\u00a0'); };
+      node.textContent = tpl.replace('%range%', day(min) + ' \u2013 ' + day(max));
+    } catch (e) {}
+  });
+
   /* ---------- Related products (Recommendations API) ---------- */
   document.querySelectorAll('.js-recommendations[data-url]').forEach(function (box) {
     if (!window.fetch) { return; }
@@ -159,16 +177,13 @@
   var select = form.querySelector('select[name="id"]');
   var groups = form.querySelectorAll('.variant-picker');
 
-  /* Rebuild the price block (sale + compare-at) for the chosen variant */
-  var marketNodes = priceWrap ? Array.prototype.slice.call(priceWrap.querySelectorAll('.price-market, .price-note')).map(function (n) { return n.cloneNode(true); }) : [];
+  /* Show the chosen variant's price (real price only, no crossed-out comparison) */
+  var stickyPrice = document.querySelector('[data-sticky-price]');
   function showPrice(v) {
+    if (stickyPrice && v.price) { stickyPrice.textContent = v.price; }
     if (!priceWrap) { return; }
     priceWrap.textContent = '';
-    if (v.price) {
-      priceWrap.appendChild(el('span', v.compare ? 'price price-sale' : 'price', v.price));
-      if (v.compare) { priceWrap.appendChild(document.createTextNode(' ')); priceWrap.appendChild(el('s', 'price-was', v.compare)); }
-      else { marketNodes.forEach(function (n) { priceWrap.appendChild(document.createTextNode(' ')); priceWrap.appendChild(n.cloneNode(true)); }); }
-    }
+    if (v.price) { priceWrap.appendChild(el('span', 'price', v.price)); }
   }
   /* Add button follows the chosen variant: Sold out when that combination is unavailable */
   function showButton(v) {
@@ -204,18 +219,16 @@
     nextBtn.addEventListener('click', function () { goTo(current() + 1); });
     gallery.insertBefore(prevBtn, track);
     gallery.insertBefore(nextBtn, track);
-    var strip = el('div', 'gallery-thumbs', '');
-    slides.forEach(function (s, n) {
-      var img = s.querySelector('img');
-      var b = el('button', 'gallery-thumb', '');
-      b.type = 'button';
-      b.setAttribute('aria-label', 'Show photo ' + (n + 1));
-      if (img) { var c = document.createElement('img'); c.src = img.currentSrc || img.src; c.alt = ''; c.loading = 'lazy'; b.appendChild(c); }
-      b.addEventListener('click', function () { goTo(n); });
-      strip.appendChild(b);
-      thumbs.push(b);
-    });
-    gallery.appendChild(strip);
+    /* Thumbnails are rendered by Liquid with their own small images (main-product.liquid); this only wires them up */
+    var strip = gallery.querySelector('[data-gallery-thumbs]');
+    if (strip) {
+      thumbs = Array.prototype.slice.call(strip.querySelectorAll('.gallery-thumb'));
+      thumbs.forEach(function (b, n) {
+        b.setAttribute('aria-label', 'Show photo ' + (n + 1));
+        b.addEventListener('click', function () { goTo(n); });
+      });
+      strip.hidden = false;
+    }
     var tick;
     track.addEventListener('scroll', function () { clearTimeout(tick); tick = setTimeout(sync, 60); });
     window.addEventListener('resize', function () { goTo(current(), false); sync(); });
@@ -266,6 +279,27 @@
   }
   /* Back/forward cache restores the page with the button still disabled */
   window.addEventListener('pageshow', function (e) { if (e.persisted) { reset(); } });
+
+  /* Mobile sticky Add to cart: shown only after the real button has scrolled off the top of the screen,
+     so it can never sit on top of the title, price or options. It presses the real button and mirrors its state. */
+  var sticky = document.querySelector('[data-sticky-atc]');
+  var stickyBtn = sticky ? sticky.querySelector('[data-sticky-add]') : null;
+  var addRow = form.querySelector('.add-row');
+  if (sticky && stickyBtn && addBtn && addRow && 'IntersectionObserver' in window) {
+    var mirror = function () { stickyBtn.disabled = addBtn.disabled; stickyBtn.textContent = addBtn.textContent; };
+    new MutationObserver(mirror).observe(addBtn, { attributes: true, childList: true, characterData: true, subtree: true });
+    mirror();
+    stickyBtn.addEventListener('click', function () {
+      if (addBtn.disabled) { return; }
+      addBtn.click();
+    });
+    new IntersectionObserver(function (entries) {
+      var r = entries[0];
+      var show = !r.isIntersecting && r.boundingClientRect.bottom < 0;
+      sticky.hidden = !show;
+      document.body.classList.toggle('has-sticky-atc', show);
+    }).observe(addRow);
+  }
 
   var addUrl = form.dataset.cartAdd;
   var cartUrl = form.dataset.cartUrl;

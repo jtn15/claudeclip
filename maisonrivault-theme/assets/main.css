@@ -83,6 +83,7 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
 .announce :focus-visible, .teaser :focus-visible, .teaser .btn:focus-visible { outline-color: var(--cream); }
 
 /* Header */
+.cart-link { white-space: nowrap; }
 .site-header { border-bottom: 1px solid var(--hairline); background: var(--cream); position: sticky; top: 0; z-index: 50; }
 .site-header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; min-height: 4.25rem; flex-wrap: wrap; }
 .logo { display: block; color: var(--green); }
@@ -265,16 +266,40 @@ input.qty-input { width: 5rem; text-align: center; flex: none; }
 .product-form .shopify-payment-button { margin-top: 0.75rem; }
 .related { border-top: 1px solid var(--hairline); }
 .related:empty, .related .js-recommendations:empty { display: none; }
-/* Mobile: the form is layout-transparent so the Add button can stick to the bottom of the whole info column */
 @media (max-width: 64rem) {
   .product-gallery { grid-column: 1 / span 6; }
   .product-info { grid-column: 7 / span 6; }
 }
+/* Mobile: the Add to cart button stays in place under the options. A separate fixed bar (.sticky-atc) appears
+   only after that button scrolls off the top of the screen (site.js), so nothing ever covers the title. */
+.sticky-atc { display: none; }
 @media (max-width: 47.9375rem) {
   .product-gallery, .product-info { grid-column: 1 / -1; position: static; }
-  .product-form { display: contents; }
-  .add-row { position: sticky; bottom: 0; z-index: 20; background: var(--cream); padding: 0.75rem 0 calc(0.75rem + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--hairline); margin-top: 1rem; }
+  .sticky-atc:not([hidden]) { display: flex; align-items: center; gap: 0.75rem; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; background: var(--cream); border-top: 1px solid var(--hairline); padding: 0.6rem var(--gutter) calc(0.6rem + env(safe-area-inset-bottom, 0px)); }
+  .sticky-atc-text { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; line-height: 1.3; }
+  .sticky-atc-title { font-size: 0.875rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sticky-atc-price { font-size: 0.875rem; color: var(--muted); }
+  .sticky-atc .btn { flex: none; min-width: 9.5rem; }
+  body.has-sticky-atc { padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px)); }
 }
+
+/* Trust block under Add to cart, fit notes, star ratings */
+.trust { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--hairline); font-size: 0.9375rem; color: var(--muted); }
+.trust-line { display: flex; align-items: flex-start; gap: 0.5rem; margin: 0 0 0.6rem; max-width: none; line-height: 1.5; }
+.trust-line > span { flex: 1 1 auto; min-width: 0; }
+.trust-line a { color: var(--ink); }
+.trust-icon { flex: none; color: var(--green); margin-top: 0.2em; }
+.pay-icons { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 0.9rem; padding: 0; }
+.pay-icon { display: block; width: 38px; height: 24px; }
+.fit-notes { margin: 0 0 1.25rem; font-size: 0.9375rem; color: var(--muted); }
+.fit-notes .label { margin: 0 0 0.4rem; color: var(--ink); }
+.fit-notes ul { margin: 0; padding-left: 1.1rem; }
+.rating { display: flex; align-items: center; gap: 0.4rem; margin: -0.5rem 0 0.75rem; font-size: 0.875rem; color: var(--muted); max-width: none; }
+.rating-small { margin: 0.1rem 0 0.2rem; font-size: 0.8125rem; }
+.rating-stars { --star: var(--ink); display: inline-block; font-size: 1em; line-height: 1; letter-spacing: 0.1em; background: linear-gradient(90deg, var(--star) var(--rating), var(--hairline) var(--rating)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.rating-stars::before { content: "\2605\2605\2605\2605\2605"; }
+.cart-policies { margin: 0.75rem 0 1rem; }
+.cart-policies p { margin: 0 0 0.35rem; }
 
 /* Accordions */
 details { border-bottom: 1px solid var(--hairline); }

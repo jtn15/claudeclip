@@ -11,6 +11,6 @@
       {{ 'products.preorder_label' | t }}{% if settings.preorder_ship != blank %} {{ 'products.expected_ship' | t: time: settings.preorder_ship }}{% endif %}
       {% if settings.preorder_policy != blank %}{{ settings.preorder_policy | escape }}{% endif %}
     {%- else -%}
-      {{ 'products.in_stock' | t }}{% if settings.in_stock_ship != blank %} {{ 'products.ships_within' | t: time: settings.in_stock_ship }}{% endif %}
+      {{ 'products.in_stock' | t }} {% render 'policy-text', part: 'shipping' %}
   {%- endcase -%}
 </p>

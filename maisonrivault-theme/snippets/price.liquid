@@ -1,35 +1,10 @@
 {%- comment -%}
-  Price with sale and "from" handling.
+  Price with "from" handling. Shows the real selling price only.
+  Crossed-out prices (Shopify compare-at price, and the old hardcoded "Comparable value" list / custom.market_value metafield)
+  are intentionally not displayed.
   Params: product, variant (optional: price that specific variant instead of the product range)
 {%- endcomment -%}
 {%- assign current_price = variant.price | default: product.price -%}
-{%- comment -%}Comparable value in cents: the custom.market_value metafield wins, else the handle list below.{%- endcomment -%}
-{%- assign market_cents = 0 -%}
-{%- assign market_meta = product.metafields.custom.market_value.value -%}
-{%- if market_meta != blank -%}
-  {%- assign market_cents = market_meta.amount | times: 100 | round -%}
-{%- else -%}
-  {%- case product.handle -%}
-    {%- when 'the-hartwell-half-zip' -%}{%- assign market_cents = 14500 -%}
-    {%- when 'the-sinclair-pullover' -%}{%- assign market_cents = 9800 -%}
-    {%- when 'the-hollis-knit-tee' -%}{%- assign market_cents = 6000 -%}
-    {%- when 'the-beaumont-polo' -%}{%- assign market_cents = 7950 -%}
-    {%- when 'the-whitlock-cardigan' -%}{%- assign market_cents = 9400 -%}
-    {%- when 'the-lockhart-jacket' -%}{%- assign market_cents = 10500 -%}
-    {%- when 'the-carrington-jeans' -%}{%- assign market_cents = 9500 -%}
-    {%- when 'the-ashby-quarter-zip' -%}{%- assign market_cents = 11800 -%}
-  {%- endcase -%}
-{%- endif -%}
-{%- assign current_compare = variant.compare_at_price | default: product.compare_at_price -%}
 {%- if current_price > 0 -%}
-  {%- if current_compare > current_price -%}
-    <span class="price price-sale">{{ current_price | money_without_trailing_zeros }}</span>
-    <s class="price-was">{{ current_compare | money_without_trailing_zeros }}</s>
-  {%- else -%}
-    <span class="price">{% if product.price_varies and variant == blank %}{{ 'products.from' | t }} {% endif %}{{ current_price | money_without_trailing_zeros }}</span>
-    {%- if market_cents > current_price -%}
-      <s class="price-was price-market">{{ market_cents | money_without_trailing_zeros }}</s>
-      <span class="price-note">{{ settings.market_value_label | default: 'Comparable value' }}</span>
-    {%- endif -%}
-  {%- endif -%}
+  <span class="price">{% if product.price_varies and variant == blank %}{{ 'products.from' | t }} {% endif %}{{ current_price | money_without_trailing_zeros }}</span>
 {%- endif -%}

@@ -1,0 +1,31 @@
+{%- comment -%}
+  Size and fit notes from product metafields (namespace custom). Each line shows only when its field is filled in;
+  nothing renders when all four are empty.
+    custom.model_height            single line text, for example 6'1" (185 cm)
+    custom.model_size_worn         single line text, for example M
+    custom.country_of_manufacture  single line text, for example Portugal
+    custom.shrinkage_note          multi-line text, for example "Pre-washed. Expect under 3% shrinkage on a cold wash."
+  Param: product
+{%- endcomment -%}
+{%- liquid
+  assign model_height = product.metafields.custom.model_height.value | strip
+  assign model_size = product.metafields.custom.model_size_worn.value | strip
+  assign made_in = product.metafields.custom.country_of_manufacture.value | strip
+  assign shrinkage = product.metafields.custom.shrinkage_note.value | strip
+-%}
+{%- if model_height != blank or model_size != blank or made_in != blank or shrinkage != blank -%}
+  <div class="fit-notes">
+    <p class="label">{{ 'products.fit_notes' | t }}</p>
+    <ul>
+      {%- if model_height != blank and model_size != blank -%}
+        <li>{{ 'products.model_info' | t: height: model_height, size: model_size }}</li>
+      {%- elsif model_height != blank -%}
+        <li>{{ 'products.model_height' | t: height: model_height }}</li>
+      {%- elsif model_size != blank -%}
+        <li>{{ 'products.model_size' | t: size: model_size }}</li>
+      {%- endif -%}
+      {%- if shrinkage != blank -%}<li>{{ shrinkage | escape | newline_to_br }}</li>{%- endif -%}
+      {%- if made_in != blank -%}<li>{{ 'products.made_in' | t: country: made_in }}</li>{%- endif -%}
+    </ul>
+  </div>
+{%- endif -%}
